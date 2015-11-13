@@ -1,11 +1,5 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glColor4f;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -33,7 +27,7 @@ public abstract class ImageDrawer {
 	 */
 	public static void drawImageToGui(int img, int x, int y, int x2, int y2) {
 		GlStateManager.bindTexture(img);
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Tessellator t = Tessellator.getInstance();
 		WorldRenderer wr = t.getWorldRenderer();
 		wr.startDrawingQuads();

@@ -243,10 +243,10 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		
 		// Look for VoxelMenu
 		try {
-			Class<? extends GuiMainMenu> customMainMenuClass = (Class<? extends GuiMainMenu>) Class.forName("com.thevoxelbox.voxelmenu.GuiMainMenuVoxelBox");
+			Class<?> customMainMenuClass = Class.forName("com.thevoxelbox.voxelmenu.GuiMainMenuVoxelBox");
 			Method mRegisterCustomScreen = customMainMenuClass.getDeclaredMethod("registerCustomScreen", String.class, Class.class, String.class);
 			mRegisterCustomScreen.invoke(null, "right", GuiScreenShotManager.class, I18n.format("screenshots"));
-			Class<? extends GuiMainMenu> ingameGuiClass = (Class<? extends GuiMainMenu>) Class.forName("com.thevoxelbox.voxelmenu.ingame.GuiIngameMenu");
+			Class<?> ingameGuiClass =  Class.forName("com.thevoxelbox.voxelmenu.ingame.GuiIngameMenu");
 			mRegisterCustomScreen = ingameGuiClass.getDeclaredMethod("registerCustomScreen", String.class, Class.class, String.class);
 			mRegisterCustomScreen.invoke(null, "", GuiScreenShotManager.class, I18n.format("screenshots"));
 			voxelMenuExists = true;

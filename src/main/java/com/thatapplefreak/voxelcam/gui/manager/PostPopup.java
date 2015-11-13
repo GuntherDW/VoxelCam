@@ -32,7 +32,6 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		super(parentScreen, 180, 120, I18n.format("postto") + "...");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitDialog() {
 		buttonList.remove(btnOk);

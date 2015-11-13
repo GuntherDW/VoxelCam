@@ -3,7 +3,6 @@ package com.thatapplefreak.voxelcam.imagehandle;
 import java.lang.reflect.Method;
 
 import com.mumfrey.liteloader.util.ObfuscationUtilities;
-import com.thatapplefreak.voxelcam.CameraMethods;
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.voxelmodpack.common.gl.FBO;

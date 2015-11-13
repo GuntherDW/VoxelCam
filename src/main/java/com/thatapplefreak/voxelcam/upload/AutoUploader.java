@@ -19,7 +19,7 @@ public abstract class AutoUploader {
 
 	public static void upload(File image) {
 		VoxelCamConfig config = VoxelCamCore.getConfig();
-		if (config.getBoolProperty(config.AUTO_UPLOAD_DROPBOX)) {
+		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_DROPBOX)) {
 			if (new File(System.getProperty("user.home"), "/dropbox/").exists()) {
 				uploadToDropbox(image);
 			} else {
@@ -29,7 +29,7 @@ public abstract class AutoUploader {
 				cmb.showChatMessageIngame();
 			}
 		}
-		if (config.getBoolProperty(config.AUTO_UPLOAD_GOOGLEDRIVE)) {
+		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_GOOGLEDRIVE)) {
 			if (new File(System.getProperty("user.home"), "/Google Drive/").exists()) {
 				uploadToGoogleDrive(image);
 			} else {
@@ -39,7 +39,7 @@ public abstract class AutoUploader {
 				cmb.showChatMessageIngame();
 			}
 		}
-		if (config.getBoolProperty(config.AUTO_UPLOAD_IMGUR)) {
+		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_IMGUR)) {
 			uploadToImgur(image);
 		}
 	}

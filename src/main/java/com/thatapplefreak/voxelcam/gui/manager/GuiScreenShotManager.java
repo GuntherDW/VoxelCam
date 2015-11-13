@@ -47,7 +47,6 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, VoxelCamIO.getSelectedPhoto());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 
