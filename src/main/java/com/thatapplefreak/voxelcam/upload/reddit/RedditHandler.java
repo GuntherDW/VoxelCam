@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.github.jreddit.user.User;
+import com.github.jreddit.entity.User;
 import com.github.jreddit.utils.restclient.HttpRestClient;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurCallback;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurResponse;

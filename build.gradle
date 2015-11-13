@@ -21,11 +21,21 @@ processResources {
 	from (sourceSets.main.resources.srcDirs) { exclude 'litemod.json' }
 }
 repositories.flatDir {dir 'liteloader'}
+configurations.compile.transitive=false
 dependencies {
-    deobfCompile 'com.mumfrey:liteloader:1.8-SNAPSHOT:srgnames'
-	compile project('voxellib')
+    deobfProvided 'com.mumfrey:liteloader:1.8-SNAPSHOT:srgnames'
+	provided project('voxellib')
+	compile 'org.facebook4j:facebook4j-core:2.3.1'
+	compile 'com.github.jreddit:jreddit:1.0.3'
+	compile 'org.twitter4j:twitter4j-core:4.0.4'
+	compile 'com.googlecode.json-simple:json-simple:1.1.1'
 }
-jar {
-	manifest.attributes.remove 'TweakClass'
+task litemod(type:Jar, dependsOn: [reobfJar, {project('voxellib').reobfJar}]) {
 	extension 'litemod'
+	from zipTree(jar.archivePath)
+    from {project('voxellib').jar.archivePath}
+	from(configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}) {
+		exclude 'META-INF/***', 'examples/**'
+	}
 }
+artifacts {litemod}
