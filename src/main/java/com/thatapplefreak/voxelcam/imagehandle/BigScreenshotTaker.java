@@ -1,5 +1,8 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
+import java.lang.reflect.Method;
+
+import com.mumfrey.liteloader.util.ObfuscationUtilities;
 import com.thatapplefreak.voxelcam.CameraMethods;
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
@@ -49,7 +52,15 @@ public abstract class BigScreenshotTaker {
 	 * Sets minecraft to a custom size
 	 */
 	private static void resizeMinecraft(final int width, final int height) {
-		CameraMethods.resize.invokeVoid(Minecraft.getMinecraft(), width, height);
+		try {
+			String method = ObfuscationUtilities.getObfuscatedFieldName("resize", "a", "func_71370_a");
+			Method m = Minecraft.class.getDeclaredMethod(method, int.class, int.class);
+			if (!m.isAccessible())
+				m.setAccessible(true);
+			m.invoke(Minecraft.getMinecraft(), width, height);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
