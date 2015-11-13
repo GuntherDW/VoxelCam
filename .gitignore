@@ -6,3 +6,4 @@ voxellib/
 *.launch
 .project
 .classpath
+run/

@@ -4,6 +4,9 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glColor4f;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 
@@ -29,7 +32,7 @@ public abstract class ImageDrawer {
 	 *            y coordinate of the bottom right corner
 	 */
 	public static void drawImageToGui(int img, int x, int y, int x2, int y2) {
-		glBindTexture(GL_TEXTURE_2D, img);
+		GlStateManager.bindTexture(img);
 		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		Tessellator t = Tessellator.getInstance();
 		WorldRenderer wr = t.getWorldRenderer();
@@ -39,5 +42,7 @@ public abstract class ImageDrawer {
 		wr.addVertexWithUV(x2, y, 0, 1, 0);
 		wr.addVertexWithUV(x, y, 0, 0, 0);
 		t.draw();
+		
+		
 	}
 }

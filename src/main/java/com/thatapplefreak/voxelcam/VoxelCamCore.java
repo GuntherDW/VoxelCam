@@ -222,9 +222,20 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	}
 	
 	@Override
-	public boolean onSaveScreenshot(String screenshotName, int width, int height, Framebuffer fbo, ReturnValue<IChatComponent> message) {
+	public boolean onSaveScreenshot(String screenshotName, int width, int height, Framebuffer buffer, ReturnValue<IChatComponent> message) {
 		// TODO move takeScreenshot() funcion into this method
-		return true;
+		if (!(Minecraft.getMinecraft().currentScreen instanceof ScreenshotIncapable)) {
+			if (GuiScreen.isShiftKeyDown()) {
+				BigScreenshotTaker.run();
+			} else {
+				ScreenshotTaker.capture(buffer.framebufferWidth, buffer.framebufferHeight);
+			}
+		}
+		ChatMessageBuilder cmb = new ChatMessageBuilder();
+		cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
+		cmb.append(" " + I18n.format("savingscreenshot"));
+		message.set(cmb.getMessage());
+		return false;
 	}
 
 	@Override

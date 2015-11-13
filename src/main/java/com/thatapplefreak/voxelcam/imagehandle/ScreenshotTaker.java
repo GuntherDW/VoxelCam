@@ -18,6 +18,7 @@ import com.thatapplefreak.voxelcam.upload.AutoUploader;
 import com.voxelmodpack.common.util.ChatMessageBuilder;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.I18n;
@@ -40,7 +41,7 @@ public abstract class ScreenshotTaker {
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 		
         if (OpenGlHelper.isFramebufferEnabled()) {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.getFramebuffer().framebufferTexture);
+            GlStateManager.bindTexture(mc.getFramebuffer().framebufferTexture);
             GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
         } else {
             GL11.glReadPixels(0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);

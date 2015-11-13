@@ -1,9 +1,9 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
+import com.thatapplefreak.voxelcam.CameraMethods;
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.voxelmodpack.common.gl.FBO;
-import com.voxelmodpack.common.runtime.PrivateMethods;
 
 import net.minecraft.client.Minecraft;
 
@@ -49,14 +49,14 @@ public abstract class BigScreenshotTaker {
 	 * Sets minecraft to a custom size
 	 */
 	private static void resizeMinecraft(final int width, final int height) {
-		PrivateMethods.resizeMinecraft.invokeVoid(Minecraft.getMinecraft(), width, height);
+		CameraMethods.resize.invokeVoid(Minecraft.getMinecraft(), width, height);
 	}
 
 	/**
 	 * Returns Minecraft to it's original width and height
 	 */
 	private static void returnMinecraftToNormal() {
-		PrivateMethods.resizeMinecraft.invokeVoid(Minecraft.getMinecraft(), originalWidthOfScreen, originalHeightOfScreen);
+		resizeMinecraft(originalWidthOfScreen, originalHeightOfScreen);
 	}
 
 	public static void onTick() {

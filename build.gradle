@@ -12,13 +12,13 @@ minecraft {
 	mappings = 'snapshot_20151111'
 }
 processResources {
-	inputs.properties version:project.version, 'build.number':buildnumber
+	def toReplace = [version:project.version, buildnumber:project.buildnumber]
+	inputs.properties toReplace
 	from (sourceSets.main.resources.srcDirs) {
 		include 'litemod.json'
-		expand 'build.number': buildnumber, version: version
+		expand toReplace
 	}
 	from (sourceSets.main.resources.srcDirs) { exclude 'litemod.json' }
-	
 }
 repositories.flatDir {dir 'liteloader'}
 dependencies {
