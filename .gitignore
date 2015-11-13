@@ -1,3 +1,8 @@
-/bin
-/build/build
-/build/.gradle
+bin/
+build/
+voxellib/
+.settings/
+.gradle/
+*.launch
+.project
+.classpath

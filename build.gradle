@@ -1,0 +1,31 @@
+plugins {
+	id 'net.minecraftforge.gradle.tweaker-client' version '2.0.2'
+}
+archivesBaseName = 'mod_VoxelCam'
+version = '1.4.0-mc1.8'
+ext.buildnumber = '33'
+
+minecraft {
+	version = '1.8'
+	runDir = 'run'
+    tweakClass = 'com.mumfrey.liteloader.launch.LiteLoaderTweaker'
+	mappings = 'snapshot_20151111'
+}
+processResources {
+	inputs.properties version:project.version, 'build.number':buildnumber
+	from (sourceSets.main.resources.srcDirs) {
+		include 'litemod.json'
+		expand 'build.number': buildnumber, version: version
+	}
+	from (sourceSets.main.resources.srcDirs) { exclude 'litemod.json' }
+	
+}
+repositories.flatDir {dir 'liteloader'}
+dependencies {
+    deobfCompile 'com.mumfrey:liteloader:1.8-SNAPSHOT:srgnames'
+	compile project('voxellib')
+}
+jar {
+	manifest.attributes.remove 'TweakClass'
+	extension 'litemod'
+}
