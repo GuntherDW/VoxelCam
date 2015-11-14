@@ -20,7 +20,7 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 	private VoxelPropertyIntField heightField;
 
 	public GuiVoxelCamSettingsPanel() {
-		config = VoxelCamCore.getConfig();
+		this.config = VoxelCamCore.getConfig();
 	}
 
 	@Override
@@ -29,8 +29,8 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 
 		// Mega Screenshot settings
 		properties.add(new VoxelPropertyLabel(I18n.format("megascreenshotsettings"), PANEL_LEFT + 15, PANEL_TOP + 10));
-		widthField = new VoxelPropertyIntFieldEX(VoxelCamCore.getConfig(), VoxelCamConfig.PHOTOWIDTH, I18n.format("width"), PANEL_LEFT + 20, PANEL_TOP + 25, 40);
-		heightField = new VoxelPropertyIntFieldEX(VoxelCamCore.getConfig(), VoxelCamConfig.PHOTOHEIGHT, I18n.format("height"), PANEL_LEFT + 20, PANEL_TOP + 45, 40);
+		widthField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOWIDTH, I18n.format("width"), PANEL_LEFT + 20, PANEL_TOP + 25, 40);
+		heightField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOHEIGHT, I18n.format("height"), PANEL_LEFT + 20, PANEL_TOP + 45, 40);
 		widthField.setMaxFieldValue(max);
 		widthField.setMinFieldValue(min);
 		properties.add(widthField);
@@ -40,7 +40,6 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		properties.add(new VoxelPropertyAbstractButton<ModConfig>(config, null, "720p", PANEL_LEFT + 70, PANEL_TOP + 24) {
 			@Override
 			protected void onClick() {
-				VoxelCamConfig config = VoxelCamCore.getConfig();
 				config.setProperty(VoxelCamConfig.PHOTOWIDTH, 1280);
 				config.setProperty(VoxelCamConfig.PHOTOHEIGHT, 720);
 				updateFields();
@@ -49,7 +48,6 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		properties.add(new VoxelPropertyAbstractButton<ModConfig>(config, null, "1080p", PANEL_LEFT + 70, PANEL_TOP + 44) {
 			@Override
 			protected void onClick() {
-				VoxelCamConfig config = VoxelCamCore.getConfig();
 				config.setProperty(VoxelCamConfig.PHOTOWIDTH, 1920);
 				config.setProperty(VoxelCamConfig.PHOTOHEIGHT, 1080);
 				updateFields();
@@ -58,7 +56,6 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		properties.add(new VoxelPropertyAbstractButton<ModConfig>(config, null, "4K (2160p)", PANEL_LEFT + 145, PANEL_TOP + 24) {
 			@Override
 			protected void onClick() {
-				VoxelCamConfig config = VoxelCamCore.getConfig();
 				config.setProperty(VoxelCamConfig.PHOTOWIDTH, 3840);
 				config.setProperty(VoxelCamConfig.PHOTOHEIGHT, 2160);
 				updateFields();
@@ -67,7 +64,6 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		properties.add(new VoxelPropertyAbstractButton<ModConfig>(config, null, "IMAX", PANEL_LEFT + 145, PANEL_TOP + 44) {
 			@Override
 			protected void onClick() {
-				VoxelCamConfig config = VoxelCamCore.getConfig();
 				config.setProperty(VoxelCamConfig.PHOTOWIDTH, 10000);
 				config.setProperty(VoxelCamConfig.PHOTOHEIGHT, 7000);
 				updateFields();

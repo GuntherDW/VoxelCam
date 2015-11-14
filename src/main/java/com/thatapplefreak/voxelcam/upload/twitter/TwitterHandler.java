@@ -14,13 +14,19 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
-public abstract class TwitterHandler {
+public class TwitterHandler {
 	
 	public static final String CONSUMER_KEY = "okIIDosE4TsrRP3JvXufw";
 	public static final String CONSUMER_SECRET = "dFJIErDmYr61YwQfDdAGMAt79dCJGu1mpiflCAa2c";
 
 	public static Twitter twitter = TwitterFactory.getSingleton();
 	public static RequestToken requestToken;
+	
+	private static VoxelCamConfig config = VoxelCamCore.getConfig();
+	
+	private String text;
+	private TwitterPostPopup callbackGui;
+
 	static {
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		try {
@@ -29,11 +35,19 @@ public abstract class TwitterHandler {
 			e.printStackTrace();
 		}
 	}
+	
+	public TwitterHandler(TwitterPostPopup callback) {
+		this.callbackGui = callback;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
 
-	public static void doTwitter(final TwitterPostPopup callbackGui, final File screenshot, final String text) {
-		Long twitterUserID = Long.parseLong(VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.TWITTERUSERID));
-		String userAuthToken = VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.TWITTERAUTHTOKEN);
-		String userAuthTokenSecret = VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET);
+	public void doTwitter(final File screenshot) {
+		Long twitterUserID = Long.parseLong(config.getStringProperty(VoxelCamConfig.TWITTERUSERID));
+		String userAuthToken = config.getStringProperty(VoxelCamConfig.TWITTERAUTHTOKEN);
+		String userAuthTokenSecret = config.getStringProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET);
 		twitter.setOAuthAccessToken(new AccessToken(userAuthToken, userAuthTokenSecret, twitterUserID));
 		new Thread("Twitter_Post_Thread") {
 			@Override
@@ -80,9 +94,9 @@ public abstract class TwitterHandler {
 
 		private void storeAccessToken(AccessToken accessToken) {
 			System.out.println("[VoxelCam] Setting Twitter access token");
-			VoxelCamCore.getConfig().setProperty(VoxelCamConfig.TWITTERAUTHTOKEN, accessToken.getToken());
-			VoxelCamCore.getConfig().setProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET, accessToken.getTokenSecret());
-			VoxelCamCore.getConfig().setProperty(VoxelCamConfig.TWITTERUSERID, String.valueOf(accessToken.getUserId()));
+			config.setProperty(VoxelCamConfig.TWITTERAUTHTOKEN, accessToken.getToken());
+			config.setProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET, accessToken.getTokenSecret());
+			config.setProperty(VoxelCamConfig.TWITTERUSERID, String.valueOf(accessToken.getUserId()));
 		}
 	}
 }

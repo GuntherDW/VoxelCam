@@ -19,7 +19,7 @@ public abstract class AutoUploader {
 
 	public static void upload(File image) {
 		VoxelCamConfig config = VoxelCamCore.getConfig();
-		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_DROPBOX)) {
+		if (config.isAutoUploadDropbox()) {
 			if (new File(System.getProperty("user.home"), "/dropbox/").exists()) {
 				uploadToDropbox(image);
 			} else {
@@ -29,7 +29,7 @@ public abstract class AutoUploader {
 				cmb.showChatMessageIngame();
 			}
 		}
-		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_GOOGLEDRIVE)) {
+		if (config.isAutoUploadGoogleDrive()) {
 			if (new File(System.getProperty("user.home"), "/Google Drive/").exists()) {
 				uploadToGoogleDrive(image);
 			} else {
@@ -39,7 +39,7 @@ public abstract class AutoUploader {
 				cmb.showChatMessageIngame();
 			}
 		}
-		if (config.getBoolProperty(VoxelCamConfig.AUTO_UPLOAD_IMGUR)) {
+		if (config.isAutoUploadImgur()) {
 			uploadToImgur(image);
 		}
 	}
@@ -47,7 +47,7 @@ public abstract class AutoUploader {
 	private static void uploadToImgur(File image) {
 		final ImgurUpload poster = new ImgurUpload(image, image.getName(), "");
 		poster.start(new ImgurCallback() {
-			
+
 			@Override
 			public void onHTTPFailure(int responseCode, String responseMessage) {
 				ChatMessageBuilder cmb = new ChatMessageBuilder();
@@ -58,7 +58,7 @@ public abstract class AutoUploader {
 				cmb.append(responseMessage);
 				cmb.showChatMessageIngame();
 			}
-			
+
 			@Override
 			public void onCompleted(ImgurResponse response) {
 				ImgurUploadResponse uploadResponse = (ImgurUploadResponse) poster.getResponse();
@@ -72,7 +72,9 @@ public abstract class AutoUploader {
 	}
 
 	private static void uploadToDropbox(File image) {
-		File dropbox = DropboxHandler.doDropBox(image, false);
+		CopyUploader handler = new DropboxHandler(false);
+		handler.upload(image);
+		File dropbox = handler.getCopy();
 		ChatMessageBuilder cmb = new ChatMessageBuilder();
 		cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
 		cmb.append(" " + I18n.format("dropboxautouploadsuccess") + " ");
@@ -81,7 +83,9 @@ public abstract class AutoUploader {
 	}
 
 	private static void uploadToGoogleDrive(File image) {
-		File googleDrive = GoogleDriveHandler.doGoogleDrive(image, false);
+		CopyUploader handler = new GoogleDriveHandler(false);
+		handler.upload(image);
+		File googleDrive = handler.getCopy();
 		ChatMessageBuilder cmb = new ChatMessageBuilder();
 		cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
 		cmb.append(" " + I18n.format("googledriveautouploadsuccess") + " ");

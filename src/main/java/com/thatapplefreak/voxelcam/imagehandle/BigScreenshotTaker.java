@@ -3,8 +3,6 @@ package com.thatapplefreak.voxelcam.imagehandle;
 import java.lang.reflect.Method;
 
 import com.mumfrey.liteloader.util.ObfuscationUtilities;
-import com.thatapplefreak.voxelcam.VoxelCamConfig;
-import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.voxelmodpack.common.gl.FBO;
 
 import net.minecraft.client.Minecraft;
@@ -15,42 +13,45 @@ import net.minecraft.client.Minecraft;
  * @author thatapplefreak
  * 
  */
-public abstract class BigScreenshotTaker {
+public class BigScreenshotTaker {
+
+	private final Minecraft minecraft;
+	private final int width;
+	private final int height;
 
 	/**
 	 * The original width of minecraft
 	 */
-	private static int originalWidthOfScreen;
-	
+	private int originalWidthOfScreen;
+
 	/**
 	 * The original height of minecraft
 	 */
-	private static int originalHeightOfScreen;
-	
-	/**
-	 * Waiting for minecraft to render to take a screenshot
-	 */
-	private static boolean waiting;
+	private int originalHeightOfScreen;
 
 	/**
 	 * The FrameBuffer that the big screenshot gets rendered to
 	 */
-	private static FBO fbo;
+	private FBO fbo;
 
-	public static void run() {
-		Minecraft.getMinecraft().gameSettings.hideGUI = true;
-		originalWidthOfScreen = Minecraft.getMinecraft().displayWidth;
-		originalHeightOfScreen = Minecraft.getMinecraft().displayHeight;
-		resizeMinecraft(VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOWIDTH), VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOHEIGHT));
+	public BigScreenshotTaker(Minecraft mc, int width, int height) {
+		this.minecraft = mc;
+		this.width = width;
+		this.height = height;
+
+		minecraft.gameSettings.hideGUI = true;
+		originalWidthOfScreen = minecraft.displayWidth;
+		originalHeightOfScreen = minecraft.displayHeight;
+
+		resizeMinecraft(width, height);
 		fbo = new FBO();
-		fbo.begin(VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOWIDTH), VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOHEIGHT));
-		waiting = true;
+		fbo.begin(width, height);
 	}
 
 	/**
 	 * Sets minecraft to a custom size
 	 */
-	private static void resizeMinecraft(final int width, final int height) {
+	private void resizeMinecraft(final int width, final int height) {
 		try {
 			String method = ObfuscationUtilities.getObfuscatedFieldName("resize", "a", "func_71370_a");
 			Method m = Minecraft.class.getDeclaredMethod(method, int.class, int.class);
@@ -65,19 +66,16 @@ public abstract class BigScreenshotTaker {
 	/**
 	 * Returns Minecraft to it's original width and height
 	 */
-	private static void returnMinecraftToNormal() {
+	private void returnMinecraftToNormal() {
 		resizeMinecraft(originalWidthOfScreen, originalHeightOfScreen);
 	}
 
-	public static void onTick() {
-		if (waiting) {
-			ScreenshotTaker.capture(VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOWIDTH), VoxelCamCore.getConfig().getIntProperty(VoxelCamConfig.PHOTOHEIGHT));
-			fbo.end();
-			fbo.dispose();
-			returnMinecraftToNormal();
-			Minecraft.getMinecraft().gameSettings.hideGUI = false;
-			waiting = false;
-		}
+	public void onTick(ScreenshotTaker screenshot) {
+		screenshot.capture(width, height);
+		fbo.end();
+		fbo.dispose();
+		returnMinecraftToNormal();
+		Minecraft.getMinecraft().gameSettings.hideGUI = false;
 	}
 
 }

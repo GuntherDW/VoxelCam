@@ -4,24 +4,25 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.thatapplefreak.voxelcam.VoxelCamCore;
+public class ScreenshotNamer {
 
-public abstract class ScreenshotNamer {
+	private SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+	private File screenshots;
 
-	public static File getScreenshotName() {
-		
-		String name = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-		
-		int var3 = 1;
+	public ScreenshotNamer(File screenshotsDir) {
+		this.screenshots = screenshotsDir;
+	}
 
-		while (true) {
-			File var1 = new File(VoxelCamCore.getScreenshotsDir(), name + (var3 == 1 ? "" : "_" + var3) + ".png");
+	public File getScreenshotFile() {
 
-			if (!var1.exists()) {
-				return var1;
-			}
+		String name = date.format(new Date());
 
-			++var3;
-		}
+		int i = 1;
+		File file;
+		do {
+			file = new File(screenshots, name + (i == 1 ? "" : "_" + i) + ".png");
+			i++;
+		} while (file.exists());
+		return file;
 	}
 }

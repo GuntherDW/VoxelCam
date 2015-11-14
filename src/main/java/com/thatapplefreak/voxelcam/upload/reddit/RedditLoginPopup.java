@@ -19,17 +19,19 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	private boolean loggingIn = false;
 	
 	private GuiTextFieldEx usernameField,passwordField;
+	private VoxelCamConfig config;
 
 	public RedditLoginPopup(GuiScreen parentScreen) {
 		super(parentScreen, 200, 100, I18n.format("pleaseloginto") + " Reddit"); //TODO Translate
+		this.config = VoxelCamCore.getConfig();
 	}
 	
 	@Override
 	protected void onInitDialog() {
 		super.onInitDialog();
 		btnOk.displayString = I18n.format("login"); //TODO Traslate
-		usernameField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 65, dialogY + 18, 130, 15, VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.REDDITUSERNAME));
-		passwordField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 65, dialogY + 48, 130, 15, VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.REDDITPASSWORD));
+		usernameField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 65, dialogY + 18, 130, 15, config.getRedditUsername());
+		passwordField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 65, dialogY + 48, 130, 15, config.getRedditPassword());
 		usernameField.setFocused(true);
 	}
 	
@@ -55,8 +57,8 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	
 	@Override
 	public void onLoginSuccess() {
-		VoxelCamCore.getConfig().setProperty(VoxelCamConfig.REDDITUSERNAME, usernameField.getText());
-		VoxelCamCore.getConfig().setProperty(VoxelCamConfig.REDDITPASSWORD, passwordField.getText());
+		config.setProperty(VoxelCamConfig.REDDITUSERNAME, usernameField.getText());
+		config.setProperty(VoxelCamConfig.REDDITPASSWORD, passwordField.getText());
 		Minecraft.getMinecraft().displayGuiScreen(new RedditPostPopup(getParentScreen()));
 	}
 	

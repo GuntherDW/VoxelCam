@@ -18,9 +18,11 @@ public class TwitterPostPopup extends GuiDialogBox {
 	private GuiTextField textbox;
 	
 	private int tweetLengh = 100;
+	private TwitterHandler twitter;
 
 	public TwitterPostPopup(GuiScreen parentScreen) {
 		super(parentScreen, 210, 90, I18n.format("postto") + " Twitter");
+		this.twitter = new TwitterHandler(this);
 	}
 
 	@Override
@@ -68,7 +70,8 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 	@Override
 	public boolean validateDialog() {
-		TwitterHandler.doTwitter(this, VoxelCamIO.getSelectedPhoto(), textbox.getText());
+		twitter.setText(textbox.getText());
+		twitter.doTwitter(VoxelCamIO.getSelectedPhoto());
 		uploading = true;
 		return false;
 	}
