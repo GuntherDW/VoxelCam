@@ -70,6 +70,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	public static boolean screenshotIsSaving = false;
 	
 	private static StatusMessage savingStatusMessage;
+	private MainMenuHandler mainMenu;
 
 	/**
 	 * Initialize the mod
@@ -183,8 +184,8 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	public void onRenderGui(GuiScreen currentScreen) {
 		// If VoxelMenu does not exist modify the Main Menu with the PhotoButton
 		if (!voxelMenuExists && currentScreen != null) {
-			if (currentScreen instanceof GuiMainMenu && !(currentScreen instanceof GuiMainMenuWithPhotoButton)) {
-				Minecraft.getMinecraft().displayGuiScreen(new GuiMainMenuWithPhotoButton());
+			if (currentScreen instanceof GuiMainMenu) {
+				mainMenu.onRenderGui(currentScreen);
 			}
 		}
 	}
@@ -206,21 +207,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	public Class<? extends ConfigPanel> getConfigPanelClass() {
 		return GuiVoxelCamSettingsPanel.class;
 	}
-	
-	public static void takeScreenshot(ReturnEventInfo<ScreenShotHelper, IChatComponent> returnEventInfo, File arg1, int arg2, int arg3, Framebuffer buffer) {
-		if (!(Minecraft.getMinecraft().currentScreen instanceof ScreenshotIncapable)) {
-			if (isKeyDown(Keyboard.KEY_LSHIFT) || isKeyDown(Keyboard.KEY_RSHIFT)) {
-				BigScreenshotTaker.run();
-			} else {
-				ScreenshotTaker.capture(buffer.framebufferWidth, buffer.framebufferHeight);
-			}
-		}
-		ChatMessageBuilder cmb = new ChatMessageBuilder();
-		cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-		cmb.append(" " + I18n.format("savingscreenshot"));
-		returnEventInfo.setReturnValue(cmb.getMessage());
-	}
-	
+
 	@Override
 	public boolean onSaveScreenshot(String screenshotName, int width, int height, Framebuffer buffer, ReturnValue<IChatComponent> message) {
 		// TODO move takeScreenshot() funcion into this method
