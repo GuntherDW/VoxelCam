@@ -1,9 +1,11 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
-import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 import com.voxelmodpack.common.gui.GuiTextFieldEx;
 
@@ -18,20 +20,21 @@ public class RedditPostPopup extends GuiDialogBox implements IRedditPostCallback
 	private static final ResourceLocation karmapony = new ResourceLocation("voxelcam", "textures/karmapony.png");
 	
 	private GuiTextFieldEx titleField, subredditField;
-	
+	private File toPost;
 	private boolean failed = false;
 
 	private boolean posting = false;;
 
-	public RedditPostPopup(GuiScreen parentScreen) {
+	public RedditPostPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 250, 130, I18n.format("postto") + " Reddit"); //TODO Translate
+		this.toPost = toPost;
 	}
 	
 	@Override
 	protected void onInitDialog() {
 		super.onInitDialog();
 		btnOk.displayString = I18n.format("post");
-		titleField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 10, dialogY + 25, 230, 20, VoxelCamIO.getSelectedPhoto().getName().replaceAll(".png", ""));
+		titleField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 10, dialogY + 25, 230, 20, FilenameUtils.getBaseName(toPost.getName()));
 		subredditField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 10, dialogY + 70, 230, 20, "minecraft");
 	}
 	
@@ -93,7 +96,7 @@ public class RedditPostPopup extends GuiDialogBox implements IRedditPostCallback
 	@Override
 	public void onSubmit() {
 		posting = true;
-		RedditHandler.doRedditPost(titleField.getText(), subredditField.getText(), VoxelCamIO.getSelectedPhoto(), this);
+		RedditHandler.doRedditPost(titleField.getText(), subredditField.getText(), toPost, this);
 	}
 
 	@Override

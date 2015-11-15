@@ -1,8 +1,8 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
+import java.io.File;
 import java.io.IOException;
 
-import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -16,11 +16,11 @@ public class TwitterPostPopup extends GuiDialogBox {
 	private volatile GuiScreen completeDialog;
 
 	private GuiTextField textbox;
-	
+	private File toPost;
 	private int tweetLengh = 100;
 	private TwitterHandler twitter;
 
-	public TwitterPostPopup(GuiScreen parentScreen) {
+	public TwitterPostPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 210, 90, I18n.format("postto") + " Twitter");
 		this.twitter = new TwitterHandler(this);
 	}
@@ -71,7 +71,7 @@ public class TwitterPostPopup extends GuiDialogBox {
 	@Override
 	public boolean validateDialog() {
 		twitter.setText(textbox.getText());
-		twitter.doTwitter(VoxelCamIO.getSelectedPhoto());
+		twitter.doTwitter(toPost);
 		uploading = true;
 		return false;
 	}

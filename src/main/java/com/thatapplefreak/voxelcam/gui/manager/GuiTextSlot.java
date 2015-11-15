@@ -1,34 +1,23 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static net.minecraft.client.renderer.GlStateManager.*;
 import static org.lwjgl.opengl.GL11.GL_CLIP_PLANE0;
 import static org.lwjgl.opengl.GL11.GL_CLIP_PLANE1;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_FLAT;
-import static org.lwjgl.opengl.GL11.GL_FOG;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SMOOTH;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClipPlane;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glShadeModel;
 
 import java.nio.DoubleBuffer;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-
 
 @SuppressWarnings({ "rawtypes", "cast" })
 public abstract class GuiTextSlot {
@@ -88,7 +77,7 @@ public abstract class GuiTextSlot {
 
 	protected abstract void drawBackground();
 
-	protected abstract void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5);
+	protected abstract void drawSlot(int var1, int var2, int var3, int var4);
 
 	protected void func_27260_a(int p_27260_1_, int p_27260_2_, Tessellator p_27260_3_) {
 	}
@@ -232,15 +221,15 @@ public abstract class GuiTextSlot {
 		this.applyScrollLimits();
 		this.enableClipping(this.top, this.bottom);
 
-		glDisable(GL_LIGHTING);
-		glDisable(GL_FOG);
+		disableLighting();
+		disableFog();
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer wr = tessellator.getWorldRenderer();
 		// glBindTexture(GL_TEXTURE_2D,
 		// this.client.renderEngine.getTexture("/gui/background.png"));
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
+		enableBlend();
+		disableTexture2D();
+		color(0.0F, 0.0F, 0.0F, 0.5F);
 		float var17 = 32.0F;
 		wr.startDrawingQuads();
 		// var18.setColorOpaque_I(2105376);
@@ -249,8 +238,8 @@ public abstract class GuiTextSlot {
 		wr.addVertexWithUV(this.right, this.top, 0.0D, this.right / var17, (this.top + (int) this.scrollDistance) / var17);
 		wr.addVertexWithUV(this.left, this.top, 0.0D, this.left / var17, (this.top + (int) this.scrollDistance) / var17);
 		tessellator.draw();
-		glDisable(GL_BLEND);
-		glEnable(GL_TEXTURE_2D);
+		disableBlend();
+		enableTexture2D();
 		var10 = this.top + 4 - (int) this.scrollDistance;
 
 		if (this.field_27262_q) {
@@ -267,8 +256,8 @@ public abstract class GuiTextSlot {
 				if (this.field_25123_p && this.isSelected(var11)) {
 					var14 = boxLeft;
 					int var15 = boxRight;
-					glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-					glDisable(GL_TEXTURE_2D);
+					color(1.0F, 1.0F, 1.0F, 1.0F);
+					disableTexture2D();
 					wr.startDrawingQuads();
 					wr.setColorOpaque_I(8421504);
 					wr.addVertexWithUV(var14, var19 + var13 + 2, 0.0D, 0.0D, 1.0D);
@@ -281,22 +270,23 @@ public abstract class GuiTextSlot {
 					wr.addVertexWithUV(var15 - 1, var19 - 1, 0.0D, 1.0D, 0.0D);
 					wr.addVertexWithUV(var14 + 1, var19 - 1, 0.0D, 0.0D, 0.0D);
 					tessellator.draw();
-					glEnable(GL_TEXTURE_2D);
+					enableTexture2D();
 				}
 
-				this.drawSlot(var11, boxRight, var19, var13, tessellator);
+				this.drawSlot(var11, boxRight, var19, var13);
 			}
 		}
 
-		glDisable(GL_DEPTH_TEST);
+		disableDepth();
 		byte var20 = 4;
 		// this.overlayBackground(0, this.top, 255, 255);
 		// this.overlayBackground(this.bottom, this.listHeight, 255, 255);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_ALPHA_TEST);
-		glShadeModel(GL_SMOOTH);
-		glDisable(GL_TEXTURE_2D);
+		enableBlend();
+		blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		disableAlpha();
+		shadeModel(GL_SMOOTH);
+		shadeModel(GL_SMOOTH);
+		disableTexture2D();
 		wr.startDrawingQuads();
 		wr.setColorRGBA_I(0, 0);
 		wr.addVertexWithUV(this.left, this.top + var20, 0.0D, 0.0D, 1.0D);
@@ -356,10 +346,10 @@ public abstract class GuiTextSlot {
 		}
 
 		this.func_27257_b(mouseX, mouseY);
-		glEnable(GL_TEXTURE_2D);
-		glShadeModel(GL_FLAT);
-		glEnable(GL_ALPHA_TEST);
-		glDisable(GL_BLEND);
+		enableTexture2D();
+		shadeModel(GL_FLAT);
+		enableAlpha();
+		disableBlend();
 
 		this.disableClipping();
 	}
@@ -395,18 +385,18 @@ public abstract class GuiTextSlot {
 
 		doubleBuffer.clear();
 		doubleBuffer.put(0).put(1).put(0).put(-yTop).flip();
-		glClipPlane(GL_CLIP_PLANE0, doubleBuffer);
+		GL11.glClipPlane(GL_CLIP_PLANE0, doubleBuffer);
 
 		doubleBuffer.clear();
 		doubleBuffer.put(0).put(-1).put(0).put(yBottom).flip();
-		glClipPlane(GL_CLIP_PLANE1, doubleBuffer);
+		GL11.glClipPlane(GL_CLIP_PLANE1, doubleBuffer);
 
-		glEnable(GL_CLIP_PLANE0);
-		glEnable(GL_CLIP_PLANE1);
+		GL11.glEnable(GL_CLIP_PLANE0);
+		GL11.glEnable(GL_CLIP_PLANE1);
 	}
 
 	protected final void disableClipping() {
-		glDisable(GL_CLIP_PLANE1);
-		glDisable(GL_CLIP_PLANE0);
+		GL11.glDisable(GL_CLIP_PLANE1);
+		GL11.glDisable(GL_CLIP_PLANE0);
 	}
 }

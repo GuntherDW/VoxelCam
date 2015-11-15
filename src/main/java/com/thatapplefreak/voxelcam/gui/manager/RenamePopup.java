@@ -2,6 +2,8 @@ package com.thatapplefreak.voxelcam.gui.manager;
 
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -12,13 +14,14 @@ import net.minecraft.client.resources.I18n;
 
 public class RenamePopup extends GuiDialogBox implements ScreenshotIncapable {
 
+	private VoxelCamIO images;
 	private GuiTextField renameBox;
 
 	private String oldText;
 
-	public RenamePopup(GuiScreen parentScreen, String oldName) {
+	public RenamePopup(GuiScreen parentScreen, VoxelCamIO images) {
 		super(parentScreen, 200, 75, I18n.format("rename"));
-		this.oldText = oldName.replaceAll(".png", "");
+		this.oldText = FilenameUtils.getBaseName(images.getSelectedPhoto().getName());
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class RenamePopup extends GuiDialogBox implements ScreenshotIncapable {
 
 	@Override
 	public void onSubmit() {
-		VoxelCamIO.rename(renameBox.getText());
+		images.rename(renameBox.getText());
 	}
 
 	@Override

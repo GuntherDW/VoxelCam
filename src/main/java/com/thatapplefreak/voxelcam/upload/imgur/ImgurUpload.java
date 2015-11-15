@@ -1,39 +1,47 @@
 package com.thatapplefreak.voxelcam.upload.imgur;
 
 import java.io.File;
-
+import java.util.Map;
 
 /**
  * Imgur agent to upload a file, callers should get the URL from the response
- * data "
+ * data
  * 
  * @author Mumfrey
  */
-public class ImgurUpload extends Imgur {
+public class ImgurUpload extends Imgur<ImgurUploadResponse> {
+
 	private static final String ROUTE = "image";
 
 	private final File file;
 
-	private final String title;
+	private String title;
 
-	private final String description;
+	private String description;
 
-	public ImgurUpload(File imageFile, String imageTitle, String imageDescription) {
+	public ImgurUpload(File imageFile) {
 		super(Method.POST, ImgurUpload.ROUTE, ImgurUploadResponse.class);
-
-		this.title = imageTitle;
 		this.file = imageFile;
-		this.description = imageDescription;
+	}
+
+	public ImgurUpload withTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
+	public ImgurUpload withDescription(String description) {
+		this.description = description;
+		return this;
 	}
 
 	@Override
-	protected void assemble() {
-		this.postData.put("image", this.file);
-		this.postData.put("type", "file");
+	protected void assemble(Map<String, Object> data) {
+		data.put("image", this.file);
+		data.put("type", "file");
 
 		if (this.title != null)
-			this.postData.put("title", this.title);
+			data.put("title", this.title);
 		if (this.description != null)
-			this.postData.put("description", this.description);
+			data.put("description", this.description);
 	}
 }

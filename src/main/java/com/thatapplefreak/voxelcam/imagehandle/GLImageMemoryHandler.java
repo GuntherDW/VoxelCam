@@ -1,6 +1,6 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
-import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static net.minecraft.client.renderer.GlStateManager.deleteTexture;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -56,7 +56,7 @@ public abstract class GLImageMemoryHandler {
 	 */
 	public static void requestImageRemovalFromMem(File imageFile) {
 		if (imageMap.containsKey(imageFile.getAbsolutePath())) {
-			glDeleteTextures(imageMap.get(imageFile.getAbsolutePath()));
+			deleteTexture(imageMap.get(imageFile.getAbsolutePath()));
 			imageMap.remove(imageFile.getAbsolutePath());
 		}
 	}
@@ -67,7 +67,7 @@ public abstract class GLImageMemoryHandler {
 	public static void requestImageFlush() {
 		Set<String> keyset = imageMap.keySet();
 		for (String s : keyset) {
-			glDeleteTextures(imageMap.get(s));
+			deleteTexture(imageMap.get(s));
 		}
 		imageMap.clear();
 	}

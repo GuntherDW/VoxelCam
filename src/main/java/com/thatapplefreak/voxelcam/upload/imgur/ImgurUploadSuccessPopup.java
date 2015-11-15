@@ -15,7 +15,7 @@ public class ImgurUploadSuccessPopup  extends GuiDialogBox {
 	private final String deleteHash;
 	private final String url;
 	
-	private GuiButton btnView, btnClipboard;
+	private GuiButton btnView, btnClipboard, btnUndo;
 
 	public ImgurUploadSuccessPopup(GuiScreen parentScreen, String deleteHash, String url) {
 		super(parentScreen, 300, 80, I18n.format("imguruploadsuccess"));
@@ -25,18 +25,21 @@ public class ImgurUploadSuccessPopup  extends GuiDialogBox {
 	
 	@Override
 	protected void onInitDialog() {
-		btnCancel.displayString = I18n.format("undo");
+		btnCancel.visible = false;
 		btnView = new GuiButton(100, dialogX + dialogWidth - 248, dialogY + dialogHeight - 22, 60, 20, I18n.format("open"));
 		buttonList.add(btnView);
 		btnClipboard = new GuiButton(200, dialogX + dialogWidth - 186, dialogY + dialogHeight - 22, 60, 20, I18n.format("copylink"));
 		buttonList.add(btnClipboard);
+		btnUndo = new GuiButton(300, btnCancel.xPosition, btnCancel.yPosition, 60, 20, I18n.format("undo"));
+		buttonList.add(btnUndo);
 	}
 	
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
-		if (guibutton.id == btnCancel.id) {
+		if (guibutton.id == btnUndo.id) {
 			ImgurDelete deleter = new ImgurDelete(this.deleteHash);
 			deleter.start(null);
+			closeDialog();
 		} else if (guibutton.id == btnView.id) {
 			BrowserOpener.openURLstringInBrowser(url);
 		} else if (guibutton.id == btnClipboard.id) {

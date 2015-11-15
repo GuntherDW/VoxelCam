@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
@@ -17,13 +18,14 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	
 	private boolean failed = false;
 	private boolean loggingIn = false;
-	
+	private File toPost;
 	private GuiTextFieldEx usernameField,passwordField;
 	private VoxelCamConfig config;
 
-	public RedditLoginPopup(GuiScreen parentScreen) {
+	public RedditLoginPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 200, 100, I18n.format("pleaseloginto") + " Reddit"); //TODO Translate
 		this.config = VoxelCamCore.getConfig();
+		this.toPost = toPost;
 	}
 	
 	@Override
@@ -59,7 +61,7 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	public void onLoginSuccess() {
 		config.setProperty(VoxelCamConfig.REDDITUSERNAME, usernameField.getText());
 		config.setProperty(VoxelCamConfig.REDDITPASSWORD, passwordField.getText());
-		Minecraft.getMinecraft().displayGuiScreen(new RedditPostPopup(getParentScreen()));
+		Minecraft.getMinecraft().displayGuiScreen(new RedditPostPopup(getParentScreen(), toPost));
 	}
 	
 	@Override

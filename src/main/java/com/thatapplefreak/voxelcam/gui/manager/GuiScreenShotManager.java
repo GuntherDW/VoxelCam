@@ -41,20 +41,23 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 
 	public SearchBar searchBar;
 
+	private VoxelCamIO images;
+
 	private static final float frameScale = 22F / 30F;
 
 	public GuiScreenShotManager() {
-		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, VoxelCamIO.getSelectedPhoto());
+		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, null);
 	}
 
 	@Override
 	public void initGui() {
 
+		images = new VoxelCamIO();
+
 		searchBar = new SearchBar(fontRendererObj, 11, 14, 50, 13);
 
-		selector = new PhotoSelector(this, 125);
+		selector = new PhotoSelector(this, images, 125);
 		selector.registerScrollButtons(buttonList, 7, 8);
-		
 
 		btnBack = new GuiButton(0, 10, height - 30, 70, 20, I18n.format("back"));
 		buttonList.add(btnBack);
@@ -94,15 +97,11 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		VoxelCamIO.updateScreenShotFilesList(searchBar.getText());
-		if (frame.getPhoto() != VoxelCamIO.getSelectedPhoto()) {
-			if (VoxelCamIO.getSelectedPhoto() == null) {
-				frame.setPhoto(null);
-			} else if (frame.getPhoto() == null && VoxelCamIO.getSelectedPhoto() != null) {
-				frame.setPhoto(VoxelCamIO.getSelectedPhoto());
-			} else if (!frame.getPhoto().equals(VoxelCamIO.getSelectedPhoto())) {
-				frame.setPhoto(VoxelCamIO.getSelectedPhoto());
-			}
+		images.updateScreenShotFilesList(searchBar.getText());
+		if (frame.getPhoto() != images.getSelectedPhoto()) {
+
+			frame.setPhoto(images.getSelectedPhoto());
+
 		}
 		frame.update((int) (btnPost.xPosition + 70 - (width * frameScale)), 13);
 		selector.setDimensionsAndPosition(10, 28, frame.x, frame.y + frame.height);
@@ -114,11 +113,11 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 		if (btn.equals(btnBack)) {
 			keyTyped('`', 1);
 		} else if (btn.equals(btnRename)) {
-			mc.displayGuiScreen(new RenamePopup(this, VoxelCamIO.getSelectedPhoto().getName()));
+			mc.displayGuiScreen(new RenamePopup(this, images));
 		} else if (btn.equals(btnDelete)) {
-			mc.displayGuiScreen(new DeletePopup(this));
+			mc.displayGuiScreen(new DeletePopup(this, images));
 		} else if (btn.equals(btnEditPicture)) {
-			mc.displayGuiScreen(new GuiEditScreenshot(this, VoxelCamIO.getSelectedPhoto()));
+			mc.displayGuiScreen(new GuiEditScreenshot(this, images.getSelectedPhoto()));
 		} else if (btn.equals(btnOpenFolder)) {
 			try {
 				Desktop.getDesktop().browse(VoxelCamCore.getScreenshotsDir().toURI());
@@ -126,7 +125,7 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 				e.printStackTrace();
 			}
 		} else if (btn.equals(btnPost)) {
-			mc.displayGuiScreen(new PostPopup(this));
+			mc.displayGuiScreen(new PostPopup(this, images.getSelectedPhoto()));
 		}
 	}
 
@@ -167,13 +166,9 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 			} else if (keyChar == 'p') {
 				actionPerformed(btnPost);
 			} else if (keyCode == Keyboard.KEY_UP || keyCode == Keyboard.KEY_W) {
-				if (VoxelCamIO.selected > 0) {
-					VoxelCamIO.selected--;
-				}
+				images.previous();
 			} else if (keyCode == Keyboard.KEY_DOWN || keyCode == Keyboard.KEY_S) {
-				if (VoxelCamIO.selected < VoxelCamIO.getScreenShotFiles().size() - 1) {
-					VoxelCamIO.selected++;
-				}
+				images.next();
 			}
 		}
 	}

@@ -1,15 +1,19 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
+import java.io.File;
+
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
-
 public class TwitterLoginPopup extends GuiDialogBox {
 
-	public TwitterLoginPopup(GuiScreen parentScreen) {
+	private File file;
+
+	public TwitterLoginPopup(GuiScreen parentScreen, File file) {
 		super(parentScreen, 210, 90, "Log in to Twitter");
+		this.file = file;
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class TwitterLoginPopup extends GuiDialogBox {
 
 	@Override
 	public boolean validateDialog() {
-		mc.displayGuiScreen(new TwitterPINPopup(getParentScreen()));
+		mc.displayGuiScreen(new TwitterPINPopup(getParentScreen(), file));
 		return false;
 	}
 

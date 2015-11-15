@@ -20,7 +20,6 @@ import com.thatapplefreak.voxelcam.gui.settings.GuiVoxelCamSettingsPanel;
 import com.thatapplefreak.voxelcam.imagehandle.BigScreenshotTaker;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotTaker;
-import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import com.voxelmodpack.common.properties.gui.SettingsPanelManager;
 import com.voxelmodpack.common.status.StatusMessage;
 import com.voxelmodpack.common.status.StatusMessageManager;
@@ -78,7 +77,6 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		}
 		mainMenu = new MainMenuHandler();
 		screenshot = new ScreenshotTaker(screenshotsDir);
-		VoxelCamIO.updateScreenShotFilesList("");
 
 		// Register the Keys that VoxelCam uses
 		LiteLoader.getInput().registerKeyBinding(VoxelCamConfig.KEY_OPENSCREENSHOTMANAGER);

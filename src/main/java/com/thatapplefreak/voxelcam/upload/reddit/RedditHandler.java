@@ -8,8 +8,7 @@ import org.json.simple.JSONObject;
 
 import com.github.jreddit.entity.User;
 import com.github.jreddit.utils.restclient.HttpRestClient;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurCallback;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurResponse;
+import com.thatapplefreak.voxelcam.upload.UploadCallback;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurUpload;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
 
@@ -28,8 +27,8 @@ public abstract class RedditHandler {
 	 * @param screenshot
 	 */
 	public static void doRedditPost(final String postTitle, final String subreddit, final File screenshot, final IRedditPostCallback callback) {
-		final ImgurUpload poster = new ImgurUpload(screenshot, screenshot.getName(), "");
-		poster.start(new ImgurCallback() {
+		final ImgurUpload poster = new ImgurUpload(screenshot).withTitle(screenshot.getName());
+		poster.start(new UploadCallback<ImgurUploadResponse>() {
 
 			@Override
 			public void onHTTPFailure(int responseCode, String responseMessage) {
@@ -37,9 +36,9 @@ public abstract class RedditHandler {
 			}
 
 			@Override
-			public void onCompleted(ImgurResponse response) {
+			public void onCompleted(ImgurUploadResponse response) {
 
-				ImgurUploadResponse uploadResponse = (ImgurUploadResponse) poster.getResponse();
+				ImgurUploadResponse uploadResponse = response;
 				if (uploadResponse.isSuccessful()) {
 					try {
 						Method m = User.class.getDeclaredMethod("submit", String.class, String.class, boolean.class, String.class);

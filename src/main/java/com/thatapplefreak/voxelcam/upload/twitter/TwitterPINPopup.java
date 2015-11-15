@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.thatapplefreak.voxelcam.upload.twitter.TwitterHandler.TwitterOauthGrabber;
@@ -14,9 +15,11 @@ import net.minecraft.client.resources.I18n;
 public class TwitterPINPopup extends GuiDialogBox {
 
 	private GuiTextField pinBox;
+	private File file;
 
-	public TwitterPINPopup(GuiScreen parentScreen) {
+	public TwitterPINPopup(GuiScreen parentScreen, File file) {
 		super(parentScreen, 200, 75, I18n.format("pleaseenterpin"));
+		this.file = file;
 	}
 
 	@Override
@@ -68,6 +71,6 @@ public class TwitterPINPopup extends GuiDialogBox {
 	}
 
 	public void goToPostGUI() {
-		mc.displayGuiScreen(new TwitterPostPopup(getParentScreen()));
+		mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), file));
 	}
 }

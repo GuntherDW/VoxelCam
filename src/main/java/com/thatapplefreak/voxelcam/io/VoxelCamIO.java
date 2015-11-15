@@ -1,83 +1,82 @@
 package com.thatapplefreak.voxelcam.io;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+
+import com.google.common.collect.ImmutableList;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.imagehandle.GLImageMemoryHandler;
 
-public abstract class VoxelCamIO {
+public class VoxelCamIO implements Comparator<File> {
 
 	/**
 	 * List of all PNG files in the screenshot directory
 	 */
-	private static ArrayList<File> screenShotFiles;
+	private List<File> screenShotFiles;
 
 	/**
 	 * Index of the currently selected photo
 	 */
-	public static int selected = 0;
+	private int selected = 0;
 
-	public static ArrayList<File> getScreenShotFiles() {
-		return screenShotFiles;
+	public List<File> getScreenShotFiles() {
+		return ImmutableList.copyOf(screenShotFiles);
 	}
 
-	public static void selectPhotoIndex(int i) {
+	public void selectPhotoIndex(int i) {
 		selected = i;
 	}
 
-	public static boolean isSelected(int i) {
+	public boolean isSelected(int i) {
 		return i == selected;
 	}
 
-	public static void updateScreenShotFilesList(String filter) {
-		File[] filesInScreenshotDir = VoxelCamCore.getScreenshotsDir().listFiles();
-		Arrays.sort(filesInScreenshotDir, new Comparator<File>() {
-			@Override
-			public int compare(File f, File g) {
-				if (f.lastModified() > g.lastModified()) {
-					return -1;
-				} else if (f.lastModified() < g.lastModified()) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
-		VoxelCamIO.screenShotFiles = new ArrayList<File>(Arrays.asList(filesInScreenshotDir));
-		for (int i = getScreenShotFiles().size() - 1; i >= 0; i--) {
-			if (!getScreenShotFiles().get(i).getName().endsWith(".png")) {
-				getScreenShotFiles().remove(i); 
-			}
-		}
-		for (int i = getScreenShotFiles().size() - 1; i >= 0; i--) {
-			if (!getScreenShotFiles().get(i).getName().contains(filter)) {
-				getScreenShotFiles().remove(i);
-			}
-		}
-		if (getScreenShotFiles().isEmpty()) {
-			getScreenShotFiles().add(null);
-		}
+	public void updateScreenShotFilesList(String filter) {
+		IOFileFilter fileFilter = new ScreenshotFileFilter(filter);
+		Collection<File> collection = FileUtils.listFiles(VoxelCamCore.getScreenshotsDir(), fileFilter, null);
+		List<File> filesInScreenshotDir = (List<File>) collection;
+		Collections.sort(filesInScreenshotDir, this);
+
+		this.screenShotFiles = filesInScreenshotDir;
 	}
 
-	public static void rename(String string) {
+	public void rename(String string) {
 		File newFile = new File(VoxelCamCore.getScreenshotsDir(), string + ".png");
 		getSelectedPhoto().renameTo(newFile);
 	}
 
-	public static void delete() {
+	public void delete() {
+		if (selected < 0 || selected >= screenShotFiles.size())
+			return;
 		GLImageMemoryHandler.requestImageRemovalFromMem(getSelectedPhoto());
 		getSelectedPhoto().delete(); // EXTERMINATE!
-		getScreenShotFiles().remove(VoxelCamIO.selected); // remove refrence
-		if (selected > 0) {
-			selected--;
-		}
+		screenShotFiles.remove(selected); // remove refrence
+		previous();
 	}
-	
-	public static File getSelectedPhoto() {
-		return getScreenShotFiles().get(selected);
+
+	public File getSelectedPhoto() {
+		return selected < 0 || selected >= screenShotFiles.size() ? null : screenShotFiles.get(selected);
 	}
-	
+
+	@Override
+	public int compare(File o1, File o2) {
+		return (int) ((o2.lastModified() - o1.lastModified()) % 2);
+	}
+
+	public void next() {
+		if (selected < screenShotFiles.size() - 1)
+			selectPhotoIndex(selected + 1);
+	}
+
+	public void previous() {
+		if (selected > 0)
+			selectPhotoIndex(selected - 1);
+	}
+
 }

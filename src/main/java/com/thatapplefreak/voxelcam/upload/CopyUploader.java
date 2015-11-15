@@ -4,45 +4,39 @@ import java.io.File;
 import java.io.IOException;
 
 import com.google.common.io.Files;
+import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
 
-import net.minecraft.util.Util;
-import net.minecraft.util.Util.EnumOS;
+public abstract class CopyUploader implements IUploader<CopyResponse> {
 
-public abstract class CopyUploader implements IUploader {
-
-	private boolean openFileManager;
-	private File copy;
-	
-	public CopyUploader(boolean open) {
-		this.openFileManager = open;
-	}
 	/**
 	 * Copies a file into the google drive folder /mcScreenshots/ and opens
 	 * native file browser and highlights it
 	 */
-	public final void upload(File screenshot) {
-		this.copy = null;
+	public final void upload(File screenshot, UploadCallback<CopyResponse> callback) {
 		File destination = new File(getCopyDir(), "mcScreenshots/" + screenshot.getName());
-		destination.getParentFile().mkdirs();
 		try {
+			destination.getParentFile().mkdirs();
 			Files.copy(screenshot, destination);
-			if (openFileManager) {
-				EnumOS os = Util.getOSType();
-				if (os.equals(EnumOS.WINDOWS)) {
-					new ProcessBuilder("explorer.exe", "/select,", destination.toString()).start();
-				} else if (os.equals(EnumOS.OSX)) {
-					new ProcessBuilder("open", "-R", destination.toString()).start();
-				}
-			}
+			callback.onCompleted(new CopyResponse(destination));
 		} catch (IOException e) {
 			e.printStackTrace();
+			// not much of an error code :/
+			callback.onHTTPFailure(-1, e.getMessage());
 		}
-		this.copy = destination;
 	}
 
 	protected abstract File getCopyDir();
-	
-	public File getCopy() {
-		return copy;
+
+	public class CopyResponse {
+
+		private File destination;
+
+		public CopyResponse(File destination) {
+			this.destination = destination;
+		}
+
+		public File getDestination() {
+			return destination;
+		}
 	}
 }

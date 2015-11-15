@@ -6,10 +6,6 @@ import com.thatapplefreak.voxelcam.upload.CopyUploader;
 
 public class GoogleDriveHandler extends CopyUploader {
 
-	public GoogleDriveHandler(boolean open) {
-		super(open);
-	}
-
 	@Override
 	protected File getCopyDir() {
 		return new File(System.getProperty("user.home" + "/Google Drive"));

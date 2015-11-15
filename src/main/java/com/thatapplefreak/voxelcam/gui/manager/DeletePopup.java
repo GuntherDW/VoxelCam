@@ -9,13 +9,16 @@ import net.minecraft.client.resources.I18n;
 
 public class DeletePopup extends GuiDialogBox implements ScreenshotIncapable {
 
-	public DeletePopup(GuiScreen parentScreen) {
+	private VoxelCamIO images;
+
+	public DeletePopup(GuiScreen parentScreen, VoxelCamIO images) {
 		super(parentScreen, 200, 75, I18n.format("delete"));
+		this.images = images;
 	}
 
 	@Override
 	public void onSubmit() {
-		VoxelCamIO.delete();
+		images.delete();
 	}
 
 	@Override

@@ -8,16 +8,15 @@ import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-
 
 public class PhotoSelector extends GuiTextSlot {
-	final GuiScreenShotManager parent;
-	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
 
-	public PhotoSelector(GuiScreenShotManager parent, int listWidth) {
+	private VoxelCamIO images;
+	private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+
+	public PhotoSelector(GuiScreenShotManager parent, VoxelCamIO images, int listWidth) {
 		super(listWidth, parent.height, 32, (parent.height - 55) + 4, 10, 35);
-		this.parent = parent;
+		this.images = images;
 	}
 
 	@Override
@@ -27,12 +26,12 @@ public class PhotoSelector extends GuiTextSlot {
 
 	@Override
 	protected int getSize() {
-		return VoxelCamIO.getScreenShotFiles().size();
+		return images.getScreenShotFiles().size();
 	}
 
 	@Override
 	protected boolean isSelected(int i) {
-		return VoxelCamIO.isSelected(i);
+		return images.isSelected(i);
 	}
 
 	@Override
@@ -40,8 +39,8 @@ public class PhotoSelector extends GuiTextSlot {
 	}
 
 	@Override
-	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator) {
-		File pic = VoxelCamIO.getScreenShotFiles().get(i);
+	protected void drawSlot(int i, int j, int k, int l) {
+		File pic = images.getScreenShotFiles().get(i);
 		if (pic != null) {
 			GlStateManager.enableBlend();
 			FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
@@ -52,7 +51,7 @@ public class PhotoSelector extends GuiTextSlot {
 
 	@Override
 	protected void elementClicked(int i, boolean flag) {
-		VoxelCamIO.selectPhotoIndex(i);
+		images.selectPhotoIndex(i);
 	}
 
 	public void setDimensionsAndPosition(int x, int y, int x2, int y2) {
