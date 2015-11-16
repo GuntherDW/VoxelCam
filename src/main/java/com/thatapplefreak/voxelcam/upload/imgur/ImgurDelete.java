@@ -2,6 +2,8 @@ package com.thatapplefreak.voxelcam.upload.imgur;
 
 import java.util.Map;
 
+import com.thatapplefreak.voxelcam.net.Method;
+
 /**
  * Imgur agent to delete an uploaded file
  * 

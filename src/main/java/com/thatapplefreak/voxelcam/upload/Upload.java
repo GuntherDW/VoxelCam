@@ -4,19 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.thatapplefreak.voxelcam.net.Method;
 import com.voxelmodpack.common.net.upload.IUploadCompleteCallback;
 import com.voxelmodpack.common.net.upload.ThreadMultipartPostUpload;
 
 public abstract class Upload<Response> implements IUploadCompleteCallback {
-	/**
-	 * Method for request
-	 * 
-	 * @author Mumfrey
-	 */
-	protected enum Method {
-		GET, POST, PUT, DELETE
-	}
-
 	/**
 	 * Gson deserialiser
 	 */

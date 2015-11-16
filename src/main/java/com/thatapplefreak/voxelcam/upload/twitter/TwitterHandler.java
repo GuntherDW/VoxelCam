@@ -62,8 +62,8 @@ public class TwitterHandler {
 					callbackGui.onUploadComplete(new TwitterUploadFailedPopup(callbackGui, statusupdate, I18n.format("errorcode") + ": " + Integer.toString(e.getErrorCode())));
 				}
 			}
-		}.start();		
-	}	
+		}.start();
+	}
 	
 	public static TwitterOauthGrabber getAGrabber(String pin, TwitterPINPopup callbackGui) {
 		return new TwitterOauthGrabber(pin, callbackGui);

@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.upload.imgur;
 
+import com.thatapplefreak.voxelcam.net.Method;
 import com.thatapplefreak.voxelcam.upload.Upload;
 
 /**

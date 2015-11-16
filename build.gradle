@@ -25,10 +25,9 @@ configurations.compile.transitive=false
 dependencies {
     deobfProvided 'com.mumfrey:liteloader:1.8-SNAPSHOT:srgnames'
 	provided project('voxellib')
-	compile 'org.facebook4j:facebook4j-core:2.3.1'
-	compile 'com.github.jreddit:jreddit:1.0.3'
-	compile 'org.twitter4j:twitter4j-core:4.0.4'
-	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile 'org.apache.httpcomponents:httpmime:4.3.3' // for multipart entity
+	compile 'oauth.signpost:signpost-core:1.2.1.2'
+	compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
 }
 task litemod(type:Jar, dependsOn: [reobfJar, {project('voxellib').reobfJar}]) {
 	extension 'litemod'
@@ -39,3 +38,11 @@ task litemod(type:Jar, dependsOn: [reobfJar, {project('voxellib').reobfJar}]) {
 	}
 }
 artifacts {litemod}
+reobf {
+	jar {
+		// so launchwrapper will load these classes from the litemod.
+		extraLine 'PK: net.apache.http.entity.mime com.thatapplefreak.redist.apache.http.entity.mime'
+		// because why not?
+		extraLine 'PK: oauth com.thatapplefreak.redist.oauth'
+	}
+}

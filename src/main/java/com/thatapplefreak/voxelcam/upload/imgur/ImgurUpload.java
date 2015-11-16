@@ -3,6 +3,8 @@ package com.thatapplefreak.voxelcam.upload.imgur;
 import java.io.File;
 import java.util.Map;
 
+import com.thatapplefreak.voxelcam.net.Method;
+
 /**
  * Imgur agent to upload a file, callers should get the URL from the response
  * data
