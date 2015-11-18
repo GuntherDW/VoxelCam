@@ -1,6 +1,6 @@
 package com.thatapplefreak.voxelcam.net;
 
-public interface Callback<Response> {
+public interface Callback<R> {
 
-	void onCompleted(Response response);
+	void onCompleted(R response);
 }

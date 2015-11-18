@@ -25,6 +25,10 @@ public class VoxelCamIO implements Comparator<File> {
 	 */
 	private int selected = 0;
 
+	public VoxelCamIO() {
+		updateScreenShotFilesList("");
+	}
+	
 	public List<File> getScreenShotFiles() {
 		return ImmutableList.copyOf(screenShotFiles);
 	}

@@ -1,29 +1,35 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
-import java.io.File;
+import java.net.URL;
 
 import com.voxelmodpack.common.gui.GuiDialogBox;
+import com.voxelmodpack.common.util.BrowserOpener;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 public class TwitterLoginPopup extends GuiDialogBox {
 
-	private File file;
+	private URL url;
 
-	public TwitterLoginPopup(GuiScreen parentScreen, File file) {
+	public TwitterLoginPopup(GuiScreen parentScreen, URL url) {
 		super(parentScreen, 210, 90, "Log in to Twitter");
-		this.file = file;
+		this.url = url;
 	}
 
 	@Override
 	protected void onInitDialog() {
 		btnOk.displayString = "Ok";
+		btnOk.visible = url != null;
 	}
 
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		super.drawDialog(mouseX, mouseY, f);
+		if (url == null) {
+			drawString(fontRendererObj, "You need to sign into Twitter.", width / 2 - 150 / 2, height / 2 - 37, 0xffffff);
+			return;
+		}
 		drawString(fontRendererObj, I18n.format("twitauthline1"), width / 2 - (150 / 2), height / 2 - 37, 0xFFFFFF);
 		drawString(fontRendererObj, I18n.format("twitauthline2"), width / 2 - (150 / 2) - 25, height / 2 - 27, 0xFFFFFF);
 		drawString(fontRendererObj, I18n.format("twitauthline3"), width / 2 - (150 / 2) - 25, height / 2 - 17, 0xFFFFFF);
@@ -32,13 +38,14 @@ public class TwitterLoginPopup extends GuiDialogBox {
 	}
 
 	@Override
-	public boolean validateDialog() {
-		mc.displayGuiScreen(new TwitterPINPopup(getParentScreen(), file));
-		return false;
+	public void onSubmit() {
 	}
 
 	@Override
-	public void onSubmit() {
+	public boolean validateDialog() {
+		mc.displayGuiScreen(new TwitterPINPopup(getParentScreen()));
+		BrowserOpener.openURLinBrowser(url);
+		return false;
 	}
 
 }

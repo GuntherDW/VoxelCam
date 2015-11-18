@@ -9,18 +9,16 @@ import com.voxelmodpack.common.util.BrowserOpener;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import twitter4j.TwitterException;
+//import twitter4j.TwitterException;
 
 public class TwitterUploadSuccessPopup extends GuiDialogBox {
 	
 	private final String url;
-	protected final long postID;
 	
 	private GuiButton btnView, btnClipboard;
 
-	public TwitterUploadSuccessPopup(GuiScreen parentScreen, long postID, String url) {
+	public TwitterUploadSuccessPopup(GuiScreen parentScreen, String url) {
 		super(parentScreen, 320, 80, I18n.format("twitterpostsuccess"));
-		this.postID = postID;
 		this.url = url;
 	}
 	
@@ -36,16 +34,16 @@ public class TwitterUploadSuccessPopup extends GuiDialogBox {
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
 		if (guibutton.id == btnCancel.id) {
-			new Thread("Twitter Post Undo Thread") {
-				@Override
-				public void run() {
-					try {
-						TwitterHandler.twitter.destroyStatus(postID);
-					} catch (TwitterException e) {
-						e.printStackTrace();
-					}
-				}
-			}.start();			
+//			new Thread("Twitter Post Undo Thread") {
+//				@Override
+//				public void run() {
+//					try {
+//						TwitterHandler.twitter.destroyStatus(postID);
+//					} catch (TwitterException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}.start();			
 		} else if (guibutton.id == btnView.id) {
 			BrowserOpener.openURLstringInBrowser(url);
 		} else if (guibutton.id == btnClipboard.id) {

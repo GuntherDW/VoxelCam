@@ -1,8 +1,6 @@
 package com.thatapplefreak.voxelcam.net;
 
-import java.util.Map;
+import org.apache.http.client.methods.RequestBuilder;
 
-public interface BasicPayload<Response> extends Payload {
-
-	void assemblePayload(Map<String, String> data);
+public interface BasicPayload extends Payload<RequestBuilder> {
 }

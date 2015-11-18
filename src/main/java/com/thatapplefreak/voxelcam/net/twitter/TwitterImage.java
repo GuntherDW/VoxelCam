@@ -1,17 +1,17 @@
 package com.thatapplefreak.voxelcam.net.twitter;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
-import com.google.common.io.Files;
 import com.thatapplefreak.voxelcam.net.Callback;
 import com.thatapplefreak.voxelcam.net.FileSizeException;
+import com.thatapplefreak.voxelcam.net.Method;
 import com.thatapplefreak.voxelcam.net.MultipartPayload;
 import com.thatapplefreak.voxelcam.net.PayloadException;
 import com.thatapplefreak.voxelcam.net.Request;
+import com.thatapplefreak.voxelcam.net.Response;
 
 public class TwitterImage extends TwitterAuth implements Request<TwitterImageResponse>, MultipartPayload {
 
@@ -43,11 +43,7 @@ public class TwitterImage extends TwitterAuth implements Request<TwitterImageRes
 
 	@Override
 	public void assemblePayload(MultipartEntityBuilder builder) throws PayloadException {
-		try {
-			builder.addBinaryBody("media", Files.asByteSource(file).openStream());
-		} catch (IOException e) {
-			throw new PayloadException(e);
-		}
+		builder.addBinaryBody("media", file);
 	}
 
 	@Override
@@ -56,10 +52,20 @@ public class TwitterImage extends TwitterAuth implements Request<TwitterImageRes
 	}
 
 	@Override
-	public void onResponse(TwitterImageResponse response) {
+	public void onResponse(Response<TwitterImageResponse> response) {
 		// TODO Auto-generated method stub
 		if (callback != null)
-			callback.onCompleted(response);
+			callback.onCompleted(response.getResponse());
 	}
 
+	@Override
+	public void onFailure(Throwable thrown) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Method getMethod() {
+		return Method.POST;
+	}
 }

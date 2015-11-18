@@ -22,6 +22,7 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 	public TwitterPostPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 210, 90, I18n.format("postto") + " Twitter");
+		this.toPost = toPost;
 		this.twitter = new TwitterHandler(this);
 	}
 

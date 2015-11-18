@@ -1,11 +1,8 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
-import java.io.File;
 import java.io.IOException;
 
-import com.thatapplefreak.voxelcam.upload.twitter.TwitterHandler.TwitterOauthGrabber;
 import com.voxelmodpack.common.gui.GuiDialogBox;
-import com.voxelmodpack.common.util.BrowserOpener;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,23 +12,21 @@ import net.minecraft.client.resources.I18n;
 public class TwitterPINPopup extends GuiDialogBox {
 
 	private GuiTextField pinBox;
-	private File file;
+	private boolean ready;
 
-	public TwitterPINPopup(GuiScreen parentScreen, File file) {
+	public TwitterPINPopup(GuiScreen parentScreen) {
 		super(parentScreen, 200, 75, I18n.format("pleaseenterpin"));
-		this.file = file;
 	}
 
 	@Override
 	protected void onInitDialog() {
 		pinBox = new GuiTextField(0xFFFFFF, fontRendererObj, width / 2 - (150 / 2), height / 2 - (16 / 2) - 8, 150, 16);
-		BrowserOpener.openURLstringInBrowser(TwitterHandler.requestToken.getAuthorizationURL());
+		// BrowserOpener.openURLstringInBrowser(TwitterHandler.requestToken.getAuthorizationURL());
 	}
 
 	@Override
 	public void onSubmit() {
-		TwitterOauthGrabber grabber = TwitterHandler.getAGrabber(pinBox.getText(), this);
-		new Thread(grabber).start();
+		ready = true;
 	}
 
 	@Override
@@ -71,6 +66,14 @@ public class TwitterPINPopup extends GuiDialogBox {
 	}
 
 	public void goToPostGUI() {
-		mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), file));
+		mc.displayGuiScreen(getParentScreen());
+	}
+
+	public boolean isReady() {
+		return ready;
+	}
+	
+	public String getPin() {
+		return pinBox.getText();
 	}
 }

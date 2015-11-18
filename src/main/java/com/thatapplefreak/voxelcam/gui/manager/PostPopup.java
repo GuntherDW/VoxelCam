@@ -3,12 +3,13 @@ package com.thatapplefreak.voxelcam.gui.manager;
 import java.io.File;
 import java.io.IOException;
 
-import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
+import com.thatapplefreak.voxelcam.net.WorkingDialog;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterStatus;
 import com.thatapplefreak.voxelcam.upload.CopyUploader;
-import com.thatapplefreak.voxelcam.upload.UploadCallback;
 import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
+import com.thatapplefreak.voxelcam.upload.UploadCallback;
 import com.thatapplefreak.voxelcam.upload.dropbox.DropboxHandler;
 import com.thatapplefreak.voxelcam.upload.googleDrive.GoogleDriveHandler;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurHandler;
@@ -18,7 +19,6 @@ import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadSuccessPopup;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditHandler;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditLoginPopup;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditPostPopup;
-import com.thatapplefreak.voxelcam.upload.twitter.TwitterLoginPopup;
 import com.thatapplefreak.voxelcam.upload.twitter.TwitterPostPopup;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
@@ -70,6 +70,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		}
 
 		btnFacebook.enabled = false;
+		btnReddit.enabled = false;
 	}
 
 	@Override
@@ -122,8 +123,10 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			dropbox.upload(toUpload, new FileCallback());
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnTwitter)) {
-			if (VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.TWITTERAUTHTOKEN).equals("needLogin")) {
-				mc.displayGuiScreen(new TwitterLoginPopup(getParentScreen(), toUpload));
+			if (!VoxelCamCore.instance().getImagePoster().isLoggedIn("Twitter")) {
+				Thread thread = VoxelCamCore.instance().getImagePoster().authenticate(new TwitterStatus(""));
+				thread.start();
+				mc.displayGuiScreen(new WorkingDialog(getParentScreen(), thread));
 			} else {
 				mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), toUpload));
 			}

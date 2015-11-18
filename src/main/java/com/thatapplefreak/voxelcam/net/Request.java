@@ -1,11 +1,14 @@
 package com.thatapplefreak.voxelcam.net;
 
-public interface Request<Response> {
+public interface Request<R> {
 
 	String getRequestUrl();
 
-	Class<Response> getResponseClass();
+	Class<R> getResponseClass();
+	
+	Method getMethod();
 
-	void onResponse(Response response);
+	void onResponse(Response<R> response);
 
+	void onFailure(Throwable thrown);
 }

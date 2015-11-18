@@ -1,6 +1,8 @@
 package com.thatapplefreak.voxelcam.net;
 
-public class PayloadException extends Exception {
+import java.io.IOException;
+
+public class PayloadException extends IOException {
 
 	private static final long serialVersionUID = 1L;
 

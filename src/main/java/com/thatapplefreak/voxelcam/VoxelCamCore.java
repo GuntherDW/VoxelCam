@@ -20,6 +20,7 @@ import com.thatapplefreak.voxelcam.gui.settings.GuiVoxelCamSettingsPanel;
 import com.thatapplefreak.voxelcam.imagehandle.BigScreenshotTaker;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotTaker;
+import com.thatapplefreak.voxelcam.net.Poster;
 import com.voxelmodpack.common.properties.gui.SettingsPanelManager;
 import com.voxelmodpack.common.status.StatusMessage;
 import com.voxelmodpack.common.status.StatusMessageManager;
@@ -64,6 +65,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	private StatusMessage savingStatusMessage;
 	private ScreenshotTaker screenshot;
 	private BigScreenshotTaker bigScreenshot;
+	private Poster imagePoster;
 
 	/**
 	 * Initialize the mod
@@ -77,9 +79,12 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		}
 		mainMenu = new MainMenuHandler();
 		screenshot = new ScreenshotTaker(screenshotsDir);
+		imagePoster = new Poster();
 
 		// Register the Keys that VoxelCam uses
 		LiteLoader.getInput().registerKeyBinding(VoxelCamConfig.KEY_OPENSCREENSHOTMANAGER);
+		// Register the exposable for tokens.
+		LiteLoader.getInstance().registerExposable(getImagePoster(), null);
 
 		// Add the configuation panel to VoxelCommons awareness
 		SettingsPanelManager.addSettingsPanel("Camera", GuiVoxelCamSettingsPanel.class);
@@ -230,7 +235,11 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		return instance;
 	}
 
-	//Leave empty
+	public Poster getImagePoster() {
+		return imagePoster;
+	}
+
+	// Leave empty
 	@Override
 	public String getName() {return null;}
 	@Override

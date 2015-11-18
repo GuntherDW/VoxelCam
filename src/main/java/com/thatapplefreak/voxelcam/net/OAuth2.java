@@ -1,4 +1,4 @@
-package com.thatapplefreak.voxelcam.net.oauth;
+package com.thatapplefreak.voxelcam.net;
 
 import java.net.URL;
 

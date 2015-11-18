@@ -1,6 +1,8 @@
 package com.thatapplefreak.voxelcam.net;
 
-public class FileSizeException extends Exception {
+import java.io.IOException;
+
+public class FileSizeException extends IOException {
 
 	private static final long serialVersionUID = 1L;
 

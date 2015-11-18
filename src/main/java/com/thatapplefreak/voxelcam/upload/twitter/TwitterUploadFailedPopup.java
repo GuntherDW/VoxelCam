@@ -4,21 +4,21 @@ import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
-import twitter4j.TwitterException;
+//import twitter4j.Status;
+//import twitter4j.StatusUpdate;
+//import twitter4j.TwitterException;
 
 public class TwitterUploadFailedPopup extends GuiDialogBox {
 	
 	private String errorMessage;
 	
-	protected StatusUpdate failedUpdate;
+	//protected StatusUpdate failedUpdate;
 	
 	private boolean retrying = false;
 
-	public TwitterUploadFailedPopup(TwitterPostPopup parentScreen, StatusUpdate failedUpdate, String errorMessage) {
+	public TwitterUploadFailedPopup(TwitterPostPopup parentScreen, Object/*StatusUpdate*/ failedUpdate, String errorMessage) {
 		super(parentScreen, 320, 80, I18n.format("twitterpostfailed"));
-		this.failedUpdate = failedUpdate;
+//		this.failedUpdate = failedUpdate;
 		this.errorMessage = errorMessage;
 	}
 
@@ -29,18 +29,18 @@ public class TwitterUploadFailedPopup extends GuiDialogBox {
 
 	@Override
 	public void onSubmit() {
-		new Thread("Twitter_Post_Thread") {
-			@Override
-			public void run() {
-				try {
-					Status status = TwitterHandler.twitter.updateStatus(failedUpdate);
-					String address = "http://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
-					((TwitterPostPopup)getParentScreen()).onUploadComplete(new TwitterUploadSuccessPopup(((TwitterPostPopup)getParentScreen()).getParentScreen(), status.getId(), address));
-				} catch (TwitterException e) {
-					((TwitterPostPopup)getParentScreen()).onUploadComplete(new TwitterUploadFailedPopup(((TwitterPostPopup)getParentScreen()), failedUpdate, I18n.format("errorcode") + ": " + Integer.toString(e.getErrorCode())));
-				}
-			}
-		}.start();	
+//		new Thread("Twitter_Post_Thread") {
+//			@Override
+//			public void run() {
+//				try {
+//					Status status = TwitterHandler.twitter.updateStatus(failedUpdate);
+//					String address = "http://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
+//					((TwitterPostPopup)getParentScreen()).onUploadComplete(new TwitterUploadSuccessPopup(((TwitterPostPopup)getParentScreen()).getParentScreen(), status.getId(), address));
+//				} catch (TwitterException e) {
+//					((TwitterPostPopup)getParentScreen()).onUploadComplete(new TwitterUploadFailedPopup(((TwitterPostPopup)getParentScreen()), failedUpdate, I18n.format("errorcode") + ": " + Integer.toString(e.getErrorCode())));
+//				}
+//			}
+//		}.start();	
 	}
 
 	@Override
