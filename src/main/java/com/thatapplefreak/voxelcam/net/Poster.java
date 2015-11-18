@@ -135,7 +135,7 @@ public class Poster implements Exposable {
 	private void setToken(String name, String token, String secret) {
 		String value = String.format("%s:%s", token, secret);
 		// base64 encode to deter tampering
-		//value = new String(Base64.getUrlEncoder().encode(token.getBytes()));
+		value = new String(Base64.getUrlEncoder().encode(value.getBytes()));
 		tokens.put(name, value);
 		saveTokens();
 	}
@@ -144,11 +144,14 @@ public class Poster implements Exposable {
 		String token = tokens.get(name);
 		Pair<String, String> pair = null;
 		if (token != null) {
-			//token = new String(Base64.getUrlDecoder().decode(token.getBytes()));
+			token = new String(Base64.getUrlDecoder().decode(token.getBytes()));
+
 			int indx = token.indexOf(':');
-			String left = token.substring(0, indx);
-			String right = token.substring(indx + 1);
-			pair = Pair.of(left, right);
+			if (indx > 0) {
+				String left = token.substring(0, indx);
+				String right = token.substring(indx + 1);
+				pair = Pair.of(left, right);
+			}
 		}
 		return pair;
 	}
