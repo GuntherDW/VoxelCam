@@ -150,10 +150,18 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			File file = response.getDestination();
 			EnumOS os = Util.getOSType();
 			try {
-				if (os.equals(EnumOS.WINDOWS)) {
+				switch (os) {
+				case WINDOWS:
 					new ProcessBuilder("explorer.exe", "/select,", file.toString()).start();
-				} else if (os.equals(EnumOS.OSX)) {
+					break;
+				case OSX:
 					new ProcessBuilder("open", "-R", file.toString()).start();
+					break;
+				default:
+					// most linux platforms have this
+					// doesn't support file selecting >.<
+					new ProcessBuilder("xdg-open", file.getParent()).start();
+					// Nautilus does, but not everyone has it
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
