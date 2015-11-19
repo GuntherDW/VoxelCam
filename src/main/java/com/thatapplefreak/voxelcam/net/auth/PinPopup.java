@@ -1,27 +1,32 @@
-package com.thatapplefreak.voxelcam.upload.twitter;
+package com.thatapplefreak.voxelcam.net.auth;
 
 import java.io.IOException;
 
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 
-public class TwitterPINPopup extends GuiDialogBox {
+public class PinPopup extends GuiDialogBox {
 
 	private GuiTextField pinBox;
 	private boolean ready;
+	private boolean cancelled;
 
-	public TwitterPINPopup(GuiScreen parentScreen) {
-		super(parentScreen, 200, 75, I18n.format("pleaseenterpin"));
+	public PinPopup(LoginPopup login) {
+		super(login.getParentScreen(), 200, 75, I18n.format("pleaseenterpin"));
 	}
 
 	@Override
 	protected void onInitDialog() {
 		pinBox = new GuiTextField(0xFFFFFF, fontRendererObj, width / 2 - (150 / 2), height / 2 - (16 / 2) - 8, 150, 16);
 		// BrowserOpener.openURLstringInBrowser(TwitterHandler.requestToken.getAuthorizationURL());
+	}
+
+	@Override
+	protected void onDialogClosed() {
+		cancelled = true;
 	}
 
 	@Override
@@ -69,11 +74,11 @@ public class TwitterPINPopup extends GuiDialogBox {
 		mc.displayGuiScreen(getParentScreen());
 	}
 
-	public boolean isReady() {
-		return ready;
-	}
-	
-	public String getPin() {
-		return pinBox.getText();
+	String getPin() {
+		if (ready)
+			return pinBox.getText();
+		if (cancelled)
+			throw new UserCancelledException();
+		return null;
 	}
 }

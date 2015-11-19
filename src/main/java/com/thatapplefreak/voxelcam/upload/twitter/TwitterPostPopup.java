@@ -13,17 +13,13 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 	private boolean uploading = false;
 
-	private volatile GuiScreen completeDialog;
-
 	private GuiTextField textbox;
 	private File toPost;
 	private int tweetLengh = 100;
-	private TwitterHandler twitter;
 
 	public TwitterPostPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 210, 90, I18n.format("postto") + " Twitter");
 		this.toPost = toPost;
-		this.twitter = new TwitterHandler(this);
 	}
 
 	@Override
@@ -47,11 +43,6 @@ public class TwitterPostPopup extends GuiDialogBox {
 			drawString(fontRendererObj, I18n.format("remainingletters") + ":", width / 2 - 5, height / 2 + 5, 0xFFFFFF);
 			drawString(fontRendererObj, Integer.toString(tweetLengh - textbox.getText().length()), width / 2 + 84, height / 2 + 5, 0xFFFFFF);
 		}
-
-		if (this.completeDialog != null) {
-			this.mc.displayGuiScreen(this.completeDialog);
-			this.completeDialog = null;
-		}
 	}
 
 	@Override
@@ -71,14 +62,9 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 	@Override
 	public boolean validateDialog() {
-		twitter.setText(textbox.getText());
-		twitter.doTwitter(toPost);
+		TwitterHandler.doTwitter(textbox.getText(), toPost, this.getParentScreen());
 		uploading = true;
 		return false;
-	}
-	
-	public void onUploadComplete(GuiScreen result) {
-		this.completeDialog = result;
 	}
 
 }

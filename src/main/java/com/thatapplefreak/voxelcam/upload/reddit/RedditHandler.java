@@ -1,16 +1,11 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
 import java.io.File;
-//import java.lang.reflect.Method;
 
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-//
-//import com.github.jreddit.entity.User;
-//import com.github.jreddit.utils.restclient.HttpRestClient;
-import com.thatapplefreak.voxelcam.upload.UploadCallback;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUpload;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
+import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUpload;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
 
 public abstract class RedditHandler {
 	
@@ -27,17 +22,10 @@ public abstract class RedditHandler {
 	 * @param screenshot
 	 */
 	public static void doRedditPost(final String postTitle, final String subreddit, final File screenshot, final IRedditPostCallback callback) {
-		final ImgurUpload poster = new ImgurUpload(screenshot).withTitle(screenshot.getName());
-		poster.start(new UploadCallback<ImgurUploadResponse>() {
-
-			@Override
-			public void onHTTPFailure(int responseCode, String responseMessage) {
-				callback.onPostFailure();
-			}
-
+		final ImgurUpload poster = new ImgurUpload(screenshot, new Callback<ImgurUploadResponse>() {
 			@Override
 			public void onCompleted(ImgurUploadResponse response) {
-
+				
 				ImgurUploadResponse uploadResponse = response;
 				if (uploadResponse.isSuccessful()) {
 					try {
@@ -55,6 +43,12 @@ public abstract class RedditHandler {
 				}
 			}
 		});
+		try {
+			VoxelCamCore.instance().getImagePoster().post(poster);
+		} catch (Exception e) {
+			e.printStackTrace();
+			callback.onPostFailure();
+		}
 	}
 	
 	/**

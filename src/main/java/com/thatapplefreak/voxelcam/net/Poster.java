@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,6 +27,9 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigStrategy;
 import com.mumfrey.liteloader.modconfig.Exposable;
 import com.mumfrey.liteloader.modconfig.ExposableOptions;
+import com.thatapplefreak.voxelcam.net.auth.AuthFetcher;
+import com.thatapplefreak.voxelcam.net.auth.Authorizer;
+import com.thatapplefreak.voxelcam.net.auth.OAuth2;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -57,6 +61,10 @@ public class Poster implements Exposable {
 				}
 			}
 			HttpUriRequest post = builder.build();
+			if (request instanceof Authorizer) {
+				String id = ((Authorizer) request).getAuthorization();
+				post.addHeader(Authorizer.HEADER, id);
+			}
 			if (request instanceof OAuth2) {
 				authenticate2((OAuth2) request).sign(post);
 			}
@@ -87,8 +95,8 @@ public class Poster implements Exposable {
 		}
 	}
 
-	public Thread authenticate(final OAuth2 auth) {
-		return new Thread() {
+	public void authenticate(final OAuth2 auth) {
+		new Thread() {
 			@Override
 			public void run() {
 				try {
@@ -97,7 +105,7 @@ public class Poster implements Exposable {
 					e.printStackTrace();
 				}
 			}
-		};
+		}.start();
 	}
 
 	private OAuthConsumer authenticate2(OAuth2 oauth) throws OAuthException, IOException {
@@ -108,7 +116,7 @@ public class Poster implements Exposable {
 			OAuthProvider provider = new CommonsHttpOAuthProvider(oauth.getRequestTokenUrl(), oauth.getAccessTokenUrl(),
 					oauth.getAuthorizeUrl());
 			URL auth = new URL(provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND));
-			String pin = oauth.authorizeUser(auth);
+			String pin = AuthFetcher.getPin(auth, oauth);
 			if (pin != null) {
 				provider.retrieveAccessToken(consumer, pin);
 				setToken(name, consumer.getToken(), consumer.getTokenSecret());

@@ -1,8 +1,7 @@
-package com.thatapplefreak.voxelcam.upload.imgur;
+package com.thatapplefreak.voxelcam.gui.upload;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-
+import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.thatapplefreak.voxelcam.net.Request;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 import com.voxelmodpack.common.util.BrowserOpener;
 
@@ -10,17 +9,16 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
-public class ImgurUploadSuccessPopup  extends GuiDialogBox {
+public class UploadSuccessPopup  extends GuiDialogBox {
 	
-	private final String deleteHash;
 	private final String url;
-	
+	private Request<?> undo;
 	private GuiButton btnView, btnClipboard, btnUndo;
 
-	public ImgurUploadSuccessPopup(GuiScreen parentScreen, String deleteHash, String url) {
+	public UploadSuccessPopup(GuiScreen parentScreen, String url, Request<?> undo) {
 		super(parentScreen, 300, 80, I18n.format("imguruploadsuccess"));
-		this.deleteHash = deleteHash;
 		this.url = url;
+		this.undo = undo;
 	}
 	
 	@Override
@@ -37,13 +35,17 @@ public class ImgurUploadSuccessPopup  extends GuiDialogBox {
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
 		if (guibutton.id == btnUndo.id) {
-			ImgurDelete deleter = new ImgurDelete(this.deleteHash);
-			deleter.start(null);
+			try {
+				VoxelCamCore.instance().getImagePoster().post(undo);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			closeDialog();
 		} else if (guibutton.id == btnView.id) {
 			BrowserOpener.openURLstringInBrowser(url);
 		} else if (guibutton.id == btnClipboard.id) {
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(url), null);
+			GuiScreen.setClipboardString(url);
 		}
 
 		super.actionPerformed(guibutton);

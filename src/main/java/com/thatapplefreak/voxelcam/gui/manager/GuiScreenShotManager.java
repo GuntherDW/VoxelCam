@@ -46,13 +46,12 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	private static final float frameScale = 22F / 30F;
 
 	public GuiScreenShotManager() {
-		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, null);
+		images = new VoxelCamIO();
+		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, images.getSelectedPhoto());
 	}
 
 	@Override
 	public void initGui() {
-
-		images = new VoxelCamIO();
 
 		searchBar = new SearchBar(fontRendererObj, 11, 14, 50, 13);
 
@@ -70,7 +69,7 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 
 		btnEditPicture = new GuiButton(3, width - (70 * 1) - 5, height - 45, 70, 20, I18n.format("edit"));
 		buttonList.add(btnEditPicture);
-		btnEditPicture.enabled = false;
+//		btnEditPicture.enabled = false;
 
 		btnOpenFolder = new GuiButton(4, width - (70 * 3) - 5, height - 25, 140, 20, I18n.format("openscreenshotsfolder"));
 		buttonList.add(btnOpenFolder);

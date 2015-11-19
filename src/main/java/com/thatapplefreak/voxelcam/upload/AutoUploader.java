@@ -4,11 +4,12 @@ import java.io.File;
 
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUpload;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
 import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
 import com.thatapplefreak.voxelcam.upload.dropbox.DropboxHandler;
 import com.thatapplefreak.voxelcam.upload.googleDrive.GoogleDriveHandler;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUpload;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
 import com.voxelmodpack.common.util.ChatMessageBuilder;
 
 import net.minecraft.client.resources.I18n;
@@ -44,32 +45,30 @@ public abstract class AutoUploader {
 	}
 
 	private static void uploadToImgur(File image) {
-		new ImgurUpload(image).withTitle(image.getName()).start(new UploadCallback<ImgurUploadResponse>() {
-
-			@Override
-			public void onHTTPFailure(int responseCode, String responseMessage) {
-				ChatMessageBuilder cmb = new ChatMessageBuilder();
-				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("imgurautouploaderror") + " (");
-				cmb.append(String.valueOf(responseCode));
-				cmb.append("): ");
-				cmb.append(responseMessage);
-				cmb.showChatMessageIngame();
-			}
-
+		new ImgurUpload(image, new Callback<ImgurUploadResponse>() {
 			@Override
 			public void onCompleted(ImgurUploadResponse response) {
-				ChatMessageBuilder cmb = new ChatMessageBuilder();
-				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("imgurautouploadsuccess") + ": ");
-				cmb.append(response.getLink(), response.getLink(), true);
-				cmb.showChatMessageIngame();
+				if (response.isSuccessful()) {
+					ChatMessageBuilder cmb = new ChatMessageBuilder();
+					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
+					cmb.append(" " + I18n.format("imgurautouploadsuccess") + ": ");
+					cmb.append(response.getData().getLink(), response.getData().getLink(), true);
+					cmb.showChatMessageIngame();
+				} else {
+					ChatMessageBuilder cmb = new ChatMessageBuilder();
+					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
+					cmb.append(" " + I18n.format("imgurautouploaderror") + " (");
+					cmb.append(String.valueOf(response.getStatus()));
+					cmb.append("): ");
+					cmb.append(response.getData().getError());
+					cmb.showChatMessageIngame();
+				}
 			}
 		});
 	}
 
 	private static void uploadToDropbox(File image) {
-		new DropboxHandler().upload(image, new UploadCallback<CopyUploader.CopyResponse>() {
+		new DropboxHandler().upload(image, new Callback<CopyUploader.CopyResponse>() {
 			@Override
 			public void onCompleted(CopyResponse response) {
 				File dropbox = response.getDestination();
@@ -79,16 +78,11 @@ public abstract class AutoUploader {
 				cmb.append(I18n.format("clicktoview"), dropbox.getPath(), false);
 				cmb.showChatMessageIngame();
 			}
-
-			@Override
-			public void onHTTPFailure(int responseCode, String responseMessage) {
-			}
-
 		});
 	}
 
 	private static void uploadToGoogleDrive(File image) {
-		new GoogleDriveHandler().upload(image, new UploadCallback<CopyUploader.CopyResponse>() {
+		new GoogleDriveHandler().upload(image, new Callback<CopyUploader.CopyResponse>() {
 			@Override
 			public void onCompleted(CopyResponse response) {
 				File googleDrive = response.getDestination();
@@ -98,12 +92,6 @@ public abstract class AutoUploader {
 				cmb.append(I18n.format("clicktoview"), googleDrive.getPath(), false);
 				cmb.showChatMessageIngame();
 			}
-
-			@Override
-			public void onHTTPFailure(int responseCode, String responseMessage) {
-
-			}
-
 		});
 	}
 

@@ -1,4 +1,4 @@
-package com.thatapplefreak.voxelcam.upload.imgur;
+package com.thatapplefreak.voxelcam.gui.upload;
 
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
@@ -6,11 +6,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 
-public class ImgurUploadFailedPopup extends GuiDialogBox {
+public class UploadFailedPopup extends GuiDialogBox {
 	
 	protected String errorMessage;
 
-	public ImgurUploadFailedPopup(GuiScreen parentScreen, String errorMessage) {
+	public UploadFailedPopup(GuiScreen parentScreen, String errorMessage) {
 		super(parentScreen, 300, 80, I18n.format("imguruploadfail"));
 		this.errorMessage = errorMessage;
 	}

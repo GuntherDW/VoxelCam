@@ -4,18 +4,19 @@ import java.io.File;
 import java.io.IOException;
 
 import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.thatapplefreak.voxelcam.gui.upload.UploadFailedPopup;
+import com.thatapplefreak.voxelcam.gui.upload.UploadSuccessPopup;
+import com.thatapplefreak.voxelcam.gui.upload.WorkingDialogPopup;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
-import com.thatapplefreak.voxelcam.net.WorkingDialog;
-import com.thatapplefreak.voxelcam.net.twitter.TwitterStatus;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurDelete;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterAuth;
 import com.thatapplefreak.voxelcam.upload.CopyUploader;
 import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
-import com.thatapplefreak.voxelcam.upload.UploadCallback;
 import com.thatapplefreak.voxelcam.upload.dropbox.DropboxHandler;
 import com.thatapplefreak.voxelcam.upload.googleDrive.GoogleDriveHandler;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurHandler;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadFailedPopup;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadSuccessPopup;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditHandler;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditLoginPopup;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditPostPopup;
@@ -102,20 +103,16 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		if (guibutton.equals(btnCancel)) {
 			closeDialog();
 		} else if (guibutton.equals(btnImgur)) {
-			imgur.upload(toUpload, new UploadCallback<ImgurUploadResponse>() {
+			imgur.upload(toUpload, new Callback<ImgurUploadResponse>() {
 				@Override
 				public void onCompleted(ImgurUploadResponse response) {
-					ImgurUploadResponse uploadResponse = (ImgurUploadResponse) response;
-					if (uploadResponse.isSuccessful()) {
-						onUploadCompleted(new ImgurUploadSuccessPopup(getParentScreen(), uploadResponse.getDeleteHash(), uploadResponse.getLink()));
+					if (response.isSuccessful()) {
+						String delete = response.getData().getDeleteHash();
+						String link = response.getData().getLink();
+						onUploadCompleted(new UploadSuccessPopup(getParentScreen(), link, new ImgurDelete(delete, null)));
 					} else {
-						onUploadCompleted(new ImgurUploadFailedPopup(getParentScreen(), uploadResponse.get("data")));
+						onUploadCompleted(new UploadFailedPopup(getParentScreen(), response.getData().getError()));
 					}
-				}
-
-				@Override
-				public void onHTTPFailure(int responseCode, String responseMessage) {
-					onUploadCompleted(new ImgurUploadFailedPopup(getParentScreen(), String.format("HTTP Error: %d %s", responseCode, responseMessage)));
 				}
 			});
 			this.uploading = true;
@@ -123,12 +120,13 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			dropbox.upload(toUpload, new FileCallback());
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnTwitter)) {
+			TwitterPostPopup twitter = new TwitterPostPopup(getParentScreen(), toUpload);
 			if (!VoxelCamCore.instance().getImagePoster().isLoggedIn("Twitter")) {
-				Thread thread = VoxelCamCore.instance().getImagePoster().authenticate(new TwitterStatus(""));
-				thread.start();
-				mc.displayGuiScreen(new WorkingDialog(getParentScreen(), thread));
+				// try to log in
+				VoxelCamCore.instance().getImagePoster().authenticate(new TwitterAuth());
+				mc.displayGuiScreen(new WorkingDialogPopup(twitter));
 			} else {
-				mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), toUpload));
+				mc.displayGuiScreen(twitter);
 			}
 		} else if (guibutton.equals(btnGoogleDrive)) {
 			gDrive.upload(toUpload, new FileCallback());
@@ -146,7 +144,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		completeDialog = g;
 	}
 
-	private class FileCallback implements UploadCallback<CopyUploader.CopyResponse> {
+	private class FileCallback implements Callback<CopyUploader.CopyResponse> {
 		@Override
 		public void onCompleted(CopyResponse response) {
 			File file = response.getDestination();
@@ -160,12 +158,6 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-		}
-
-		@Override
-		public void onHTTPFailure(int responseCode, String responseMessage) {
-			// ignore?
 		}
 	}
 
