@@ -1,5 +1,10 @@
 package com.thatapplefreak.voxelcam.upload;
 
+import static com.thatapplefreak.voxelcam.Translations.AUTO_UPLOAD_FAIL;
+import static com.thatapplefreak.voxelcam.Translations.AUTO_UPLOAD_SUCCESS;
+import static com.thatapplefreak.voxelcam.Translations.CLICK_TO_VIEW;
+import static com.thatapplefreak.voxelcam.Translations.NO_INSTALL_ERROR;
+
 import java.io.File;
 
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
@@ -25,7 +30,7 @@ public abstract class AutoUploader {
 			} else {
 				ChatMessageBuilder cmb = new ChatMessageBuilder();
 				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("dropboxnoinstallerror"));
+				cmb.append(" " + I18n.format(NO_INSTALL_ERROR, "Dropbox"));
 				cmb.showChatMessageIngame();
 			}
 		}
@@ -35,7 +40,7 @@ public abstract class AutoUploader {
 			} else {
 				ChatMessageBuilder cmb = new ChatMessageBuilder();
 				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("googledrivenoinstallerror"));
+				cmb.append(" " + I18n.format(NO_INSTALL_ERROR, "Google Drive"));
 				cmb.showChatMessageIngame();
 			}
 		}
@@ -45,54 +50,67 @@ public abstract class AutoUploader {
 	}
 
 	private static void uploadToImgur(File image) {
-		new ImgurUpload(image, new Callback<ImgurUploadResponse>() {
+		VoxelCamCore.instance().getImagePoster().post(new ImgurUpload(image), new Callback<ImgurUploadResponse>() {
 			@Override
-			public void onCompleted(ImgurUploadResponse response) {
+			public void onSuccess(ImgurUploadResponse response) {
 				if (response.isSuccessful()) {
 					ChatMessageBuilder cmb = new ChatMessageBuilder();
 					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-					cmb.append(" " + I18n.format("imgurautouploadsuccess") + ": ");
+					cmb.append(" Imgur: " + I18n.format(AUTO_UPLOAD_SUCCESS) + ": ");
 					cmb.append(response.getData().getLink(), response.getData().getLink(), true);
 					cmb.showChatMessageIngame();
 				} else {
 					ChatMessageBuilder cmb = new ChatMessageBuilder();
-					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-					cmb.append(" " + I18n.format("imgurautouploaderror") + " (");
-					cmb.append(String.valueOf(response.getStatus()));
-					cmb.append("): ");
-					cmb.append(response.getData().getError());
+					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED);
+					cmb.append(" Imgur: " + I18n.format(AUTO_UPLOAD_FAIL, response.getData().getError()));
 					cmb.showChatMessageIngame();
 				}
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				new ChatMessageBuilder()
+				.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false)
+				.append(" Imgur: " + I18n.format(AUTO_UPLOAD_FAIL) + " ")
+				.append(t.getMessage())
+				.showChatMessageIngame();
 			}
 		});
 	}
 
 	private static void uploadToDropbox(File image) {
-		new DropboxHandler().upload(image, new Callback<CopyUploader.CopyResponse>() {
-			@Override
-			public void onCompleted(CopyResponse response) {
-				File dropbox = response.getDestination();
-				ChatMessageBuilder cmb = new ChatMessageBuilder();
-				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("dropboxautouploadsuccess") + " ");
-				cmb.append(I18n.format("clicktoview"), dropbox.getPath(), false);
-				cmb.showChatMessageIngame();
-			}
-		});
+		new DropboxHandler().upload(image, new CopyCallback("Dropbox"));
 	}
 
 	private static void uploadToGoogleDrive(File image) {
-		new GoogleDriveHandler().upload(image, new Callback<CopyUploader.CopyResponse>() {
-			@Override
-			public void onCompleted(CopyResponse response) {
-				File googleDrive = response.getDestination();
-				ChatMessageBuilder cmb = new ChatMessageBuilder();
-				cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-				cmb.append(" " + I18n.format("googledriveautouploadsuccess") + " ");
-				cmb.append(I18n.format("clicktoview"), googleDrive.getPath(), false);
-				cmb.showChatMessageIngame();
-			}
-		});
+		new GoogleDriveHandler().upload(image, new CopyCallback("Google Drive"));
+	}
+
+	private static class CopyCallback implements Callback<CopyUploader.CopyResponse> {
+
+		private String to;
+
+		private CopyCallback(String to) {
+			this.to = to;
+		}
+
+		@Override
+		public void onSuccess(CopyResponse response) {
+			File file = response.getDestination();
+			new ChatMessageBuilder()
+			.append("[VoxelCam] ", EnumChatFormatting.DARK_RED)
+			.append(to + ": " + I18n.format(AUTO_UPLOAD_SUCCESS) + " ") // grr, translatable
+			.append(I18n.format(CLICK_TO_VIEW), file.getPath(), false)
+			.showChatMessageIngame();
+		}
+
+		@Override
+		public void onFailure(Throwable t) {
+			new ChatMessageBuilder()
+			.append("[VoxelCam] ", EnumChatFormatting.DARK_RED)
+			.append(to + ": " + I18n.format(AUTO_UPLOAD_FAIL, t.getMessage()))
+			.showChatMessageIngame();
+		}
 	}
 
 }

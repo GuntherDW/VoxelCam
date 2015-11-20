@@ -11,12 +11,8 @@ import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
 public class ImgurHandler {
 
 	public void upload(File screenshot, Callback<ImgurUploadResponse> callback) {
-		Request<?> req = new ImgurUpload(screenshot, callback);
-		try {
-			VoxelCamCore.instance().getImagePoster().post(req);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Request<ImgurUploadResponse> req = new ImgurUpload(screenshot);
+		VoxelCamCore.instance().getImagePoster().post(req, callback);
 	}
 
 }

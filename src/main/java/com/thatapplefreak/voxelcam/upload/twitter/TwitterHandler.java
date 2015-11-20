@@ -39,30 +39,34 @@ public class TwitterHandler implements Runnable {
 	@Override
 	public void run() {
 		try {
-			POSTER.post(new TwitterImage(file, new Callback<TwitterImageResponse>() {
+			POSTER.post(new TwitterImage(file), new Callback<TwitterImageResponse>() {
 				@Override
-				public void onCompleted(TwitterImageResponse response) {
+				public void onSuccess(TwitterImageResponse response) {
 					onImageUpload(response);
 				}
-			}));
+				@Override
+				public void onFailure(Throwable t) {
+					Throwables.propagate(t);
+				}
+			});
 		} catch (Exception e) {
 			Minecraft.getMinecraft().displayGuiScreen(new UploadFailedPopup(parent, e.getMessage()));
-			e.printStackTrace();
 		}
 	}
 
 	private void onImageUpload(TwitterImageResponse response) {
-		try {
-			String[] images = new String[] { response.getMediaIdString() };
-			POSTER.post(new TwitterStatus(text + " #VoxelCam", images, new Callback<TwitterStatusResponse>() {
-				@Override
-				public void onCompleted(TwitterStatusResponse response) {
-					onStatusUpdate(response);
-				}
-			}));
-		} catch (Exception e) {
-			Throwables.propagate(e);
-		}
+		String images = response.getMediaIdString();
+		POSTER.post(new TwitterStatus(text + " #VoxelCam", images), new Callback<TwitterStatusResponse>() {
+			@Override
+			public void onSuccess(TwitterStatusResponse response) {
+				onStatusUpdate(response);
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				Throwables.propagate(t);
+			}
+		});
 	}
 
 	private void onStatusUpdate(TwitterStatusResponse response) {

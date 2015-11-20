@@ -5,13 +5,10 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
-import com.thatapplefreak.voxelcam.net.Callback;
 import com.thatapplefreak.voxelcam.net.FileSizeException;
 import com.thatapplefreak.voxelcam.net.Method;
 import com.thatapplefreak.voxelcam.net.MultipartPayload;
-import com.thatapplefreak.voxelcam.net.PayloadException;
 import com.thatapplefreak.voxelcam.net.Request;
-import com.thatapplefreak.voxelcam.net.Response;
 
 public class TwitterImage extends TwitterAuth implements Request<TwitterImageResponse>, MultipartPayload {
 
@@ -20,14 +17,12 @@ public class TwitterImage extends TwitterAuth implements Request<TwitterImageRes
 	private static final long MAX_SIZE = (long) Math.pow(1024, 2);
 
 	private File file;
-	private Callback<TwitterImageResponse> callback;
 
-	public TwitterImage(File file, Callback<TwitterImageResponse> callback) throws FileSizeException {
+	public TwitterImage(File file) throws FileSizeException {
 		if (file.length() > MAX_SIZE) {
 			throw new FileSizeException(formatException(file.length(), MAX_SIZE));
 		}
 		this.file = file;
-		this.callback = callback;
 	}
 
 	private static String formatException(long size, long max) {
@@ -42,26 +37,13 @@ public class TwitterImage extends TwitterAuth implements Request<TwitterImageRes
 	}
 
 	@Override
-	public void assemblePayload(MultipartEntityBuilder builder) throws PayloadException {
+	public void assemblePayload(MultipartEntityBuilder builder) {
 		builder.addBinaryBody("media", file);
 	}
 
 	@Override
 	public Class<TwitterImageResponse> getResponseClass() {
 		return TwitterImageResponse.class;
-	}
-
-	@Override
-	public void onResponse(Response<TwitterImageResponse> response) {
-		// TODO Auto-generated method stub
-		if (callback != null)
-			callback.onCompleted(response.getResponse());
-	}
-
-	@Override
-	public void onFailure(Throwable thrown) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

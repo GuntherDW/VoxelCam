@@ -4,9 +4,7 @@ import org.apache.http.client.methods.RequestBuilder;
 
 import com.thatapplefreak.voxelcam.net.BasicPayload;
 import com.thatapplefreak.voxelcam.net.Method;
-import com.thatapplefreak.voxelcam.net.PayloadException;
 import com.thatapplefreak.voxelcam.net.Request;
-import com.thatapplefreak.voxelcam.net.Response;
 
 public class TwitterDestroy extends TwitterAuth implements Request<TwitterDestroyResponse>, BasicPayload {
 
@@ -19,7 +17,7 @@ public class TwitterDestroy extends TwitterAuth implements Request<TwitterDestro
 	}
 
 	@Override
-	public void assemblePayload(RequestBuilder data) throws PayloadException {
+	public void assemblePayload(RequestBuilder data) {
 		data.addHeader("id", id);
 		data.addHeader("trim_user", "true");
 	}
@@ -37,14 +35,6 @@ public class TwitterDestroy extends TwitterAuth implements Request<TwitterDestro
 	@Override
 	public Method getMethod() {
 		return Method.POST;
-	}
-
-	@Override
-	public void onResponse(Response<TwitterDestroyResponse> response) {
-	}
-
-	@Override
-	public void onFailure(Throwable thrown) {
 	}
 
 }

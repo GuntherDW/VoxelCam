@@ -1,8 +1,6 @@
 package com.thatapplefreak.voxelcam.net.imgur;
 
-import com.thatapplefreak.voxelcam.net.Callback;
 import com.thatapplefreak.voxelcam.net.Request;
-import com.thatapplefreak.voxelcam.net.Response;
 import com.thatapplefreak.voxelcam.net.auth.Authorizer;
 
 /**
@@ -15,11 +13,9 @@ public abstract class Imgur<T extends ImgurResponse<?>> implements Request<T>, A
 	private static final String CLIENT_ID = "b0118040d2b06e2";
 
 	private final String id;
-	private final Callback<T> callback;
 
-	public Imgur(String id, Callback<T> callback) {
+	public Imgur(String id) {
 		this.id = id;
-		this.callback = callback;
 	}
 
 	@Override
@@ -30,16 +26,5 @@ public abstract class Imgur<T extends ImgurResponse<?>> implements Request<T>, A
 	@Override
 	public String getAuthorization() {
 		return String.format("Client-ID %s", CLIENT_ID);
-	}
-
-	@Override
-	public void onResponse(Response<T> response) {
-		if (callback != null)
-			callback.onCompleted(response.getResponse());
-	}
-
-	@Override
-	public void onFailure(Throwable thrown) {
-		thrown.printStackTrace();
 	}
 }

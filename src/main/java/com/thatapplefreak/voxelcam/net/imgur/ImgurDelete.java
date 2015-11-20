@@ -1,12 +1,11 @@
 package com.thatapplefreak.voxelcam.net.imgur;
 
-import com.thatapplefreak.voxelcam.net.Callback;
 import com.thatapplefreak.voxelcam.net.Method;
 
 public class ImgurDelete extends Imgur<ImgurDeleteResponse> {
 
-	public ImgurDelete(String id, Callback<ImgurDeleteResponse> callback) {
-		super(id, callback);
+	public ImgurDelete(String id) {
+		super(id);
 	}
 
 	@Override

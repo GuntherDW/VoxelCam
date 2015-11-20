@@ -17,9 +17,10 @@ public abstract class CopyUploader {
 		try {
 			destination.getParentFile().mkdirs();
 			Files.copy(screenshot, destination);
-			callback.onCompleted(new CopyResponse(destination));
+			callback.onSuccess(new CopyResponse(destination));
 		} catch (IOException e) {
 			e.printStackTrace();
+			callback.onFailure(e);
 		}
 	}
 

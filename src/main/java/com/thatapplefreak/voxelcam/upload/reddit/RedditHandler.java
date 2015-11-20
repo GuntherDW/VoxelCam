@@ -22,10 +22,11 @@ public abstract class RedditHandler {
 	 * @param screenshot
 	 */
 	public static void doRedditPost(final String postTitle, final String subreddit, final File screenshot, final IRedditPostCallback callback) {
-		final ImgurUpload poster = new ImgurUpload(screenshot, new Callback<ImgurUploadResponse>() {
+		final ImgurUpload poster = new ImgurUpload(screenshot);
+		VoxelCamCore.instance().getImagePoster().post(poster, new Callback<ImgurUploadResponse>() {
 			@Override
-			public void onCompleted(ImgurUploadResponse response) {
-				
+			public void onSuccess(ImgurUploadResponse response) {
+
 				ImgurUploadResponse uploadResponse = response;
 				if (uploadResponse.isSuccessful()) {
 					try {
@@ -42,15 +43,15 @@ public abstract class RedditHandler {
 					callback.onPostFailure();
 				}
 			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				// TODO Auto-generated method stub
+
+			}
 		});
-		try {
-			VoxelCamCore.instance().getImagePoster().post(poster);
-		} catch (Exception e) {
-			e.printStackTrace();
-			callback.onPostFailure();
-		}
 	}
-	
+
 	/**
 	 * Log the user into reddit
 	 * @param username
@@ -72,12 +73,12 @@ public abstract class RedditHandler {
 //			}
 //		}.start();
 	}
-	
+
 	/**
 	 * @return True if the user is logged in
 	 */
 	public static boolean isLoggedIn() {
 		return loggedIn;
 	}
-	
+
 }

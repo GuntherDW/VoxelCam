@@ -8,7 +8,4 @@ public interface Request<R> {
 	
 	Method getMethod();
 
-	void onResponse(Response<R> response);
-
-	void onFailure(Throwable thrown);
 }

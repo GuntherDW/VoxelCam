@@ -4,14 +4,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.client.methods.RequestBuilder;
 
 import com.google.common.base.Joiner;
-import com.thatapplefreak.voxelcam.gui.upload.UploadFailedPopup;
 import com.thatapplefreak.voxelcam.net.BasicPayload;
-import com.thatapplefreak.voxelcam.net.Callback;
 import com.thatapplefreak.voxelcam.net.Method;
 import com.thatapplefreak.voxelcam.net.Request;
-import com.thatapplefreak.voxelcam.net.Response;
-
-import net.minecraft.client.Minecraft;
 
 public class TwitterStatus extends TwitterAuth implements Request<TwitterStatusResponse>, BasicPayload {
 
@@ -22,9 +17,8 @@ public class TwitterStatus extends TwitterAuth implements Request<TwitterStatusR
 
 	private String tweet; // max 140 chars
 	private String[] imageIds; // max 4
-	private Callback<TwitterStatusResponse> callback;
 
-	public TwitterStatus(String tweet, String[] images, Callback<TwitterStatusResponse> callback) {
+	public TwitterStatus(String tweet, String... images) {
 		if (tweet.length() > TWEET_MAX) {
 			tweet = tweet.substring(0, 120);
 		}
@@ -33,7 +27,6 @@ public class TwitterStatus extends TwitterAuth implements Request<TwitterStatusR
 		}
 		this.tweet = tweet;
 		this.imageIds = images;
-		this.callback = callback;
 	}
 
 	@Override
@@ -47,18 +40,6 @@ public class TwitterStatus extends TwitterAuth implements Request<TwitterStatusR
 	@Override
 	public Class<TwitterStatusResponse> getResponseClass() {
 		return TwitterStatusResponse.class;
-	}
-
-	@Override
-	public void onResponse(Response<TwitterStatusResponse> response) {
-		if (callback != null)
-			callback.onCompleted(response.getResponse());
-	}
-
-	@Override
-	public void onFailure(Throwable thrown) {
-		Minecraft mc = Minecraft.getMinecraft();
-		mc.displayGuiScreen(new UploadFailedPopup(mc.currentScreen, thrown.getMessage()));
 	}
 
 	@Override
