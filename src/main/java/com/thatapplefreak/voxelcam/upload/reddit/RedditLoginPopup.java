@@ -3,8 +3,6 @@ package com.thatapplefreak.voxelcam.upload.reddit;
 import java.io.File;
 import java.io.IOException;
 
-import com.thatapplefreak.voxelcam.VoxelCamConfig;
-import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 import com.voxelmodpack.common.gui.GuiTextFieldEx;
@@ -20,11 +18,9 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	private boolean loggingIn = false;
 	private File toPost;
 	private GuiTextFieldEx usernameField,passwordField;
-	private VoxelCamConfig config;
 
 	public RedditLoginPopup(GuiScreen parentScreen, File toPost) {
 		super(parentScreen, 200, 100, I18n.format("pleaseloginto") + " Reddit"); //TODO Translate
-		this.config = VoxelCamCore.getConfig();
 		this.toPost = toPost;
 	}
 	
@@ -32,8 +28,9 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	protected void onInitDialog() {
 		super.onInitDialog();
 		btnOk.displayString = I18n.format("login"); //TODO Traslate
-		usernameField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 65, dialogY + 18, 130, 15, config.getRedditUsername());
-		passwordField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 65, dialogY + 48, 130, 15, config.getRedditPassword());
+		// FIXME TODO XXX
+		usernameField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 65, dialogY + 18, 130, 15, "");// config.getRedditUsername());
+		passwordField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 65, dialogY + 48, 130, 15, "");//, config.getRedditPassword());
 		usernameField.setFocused(true);
 	}
 	
@@ -59,8 +56,6 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	
 	@Override
 	public void onLoginSuccess() {
-		config.setProperty(VoxelCamConfig.REDDITUSERNAME, usernameField.getText());
-		config.setProperty(VoxelCamConfig.REDDITPASSWORD, passwordField.getText());
 		Minecraft.getMinecraft().displayGuiScreen(new RedditPostPopup(getParentScreen(), toPost));
 	}
 	
