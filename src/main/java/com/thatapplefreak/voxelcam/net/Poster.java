@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -44,7 +43,7 @@ public class Poster implements Exposable {
 	@Expose
 	private Map<String, String> tokens = Maps.newHashMap();
 
-	public <R> void post(Request<R> request) throws OAuthException, IOException, PayloadException {
+	public <R> void post(Request<R> request, Callback<R> callback) {
 		try {
 			RequestBuilder builder = RequestBuilder.create(request.getMethod().toString());
 			builder.setUri(request.getRequestUrl());
@@ -56,8 +55,6 @@ public class Poster implements Exposable {
 					builder.setEntity(data.build());
 				} else if (request instanceof BasicPayload) {
 					((BasicPayload) request).assemblePayload(builder);
-				} else {
-					throw new PayloadException("No payload found");
 				}
 			}
 			HttpUriRequest post = builder.build();
@@ -71,12 +68,13 @@ public class Poster implements Exposable {
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpResponse response = client.execute(post);
 
-			StatusLine status = response.getStatusLine();
 			R r = createResponse(response.getEntity(), request.getResponseClass());
-			request.onResponse(new Response<R>(status, r));
+			if (callback != null)
+				callback.onSuccess(r);
 		} catch (Exception e) {
 			e.printStackTrace();
-			request.onFailure(e);
+			if (callback != null)
+				callback.onFailure(e);
 		}
 	}
 

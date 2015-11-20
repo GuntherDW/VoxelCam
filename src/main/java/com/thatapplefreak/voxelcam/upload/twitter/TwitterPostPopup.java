@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -18,13 +19,13 @@ public class TwitterPostPopup extends GuiDialogBox {
 	private int tweetLengh = 100;
 
 	public TwitterPostPopup(GuiScreen parentScreen, File toPost) {
-		super(parentScreen, 210, 90, I18n.format("postto") + " Twitter");
+		super(parentScreen, 210, 90, I18n.format(POST_TO, "Twitter"));
 		this.toPost = toPost;
 	}
 
 	@Override
 	protected void onInitDialog() {
-		btnOk.displayString = I18n.format("post");
+		btnOk.displayString = I18n.format(POST);
 		textbox = new GuiTextField(0xFFFFFF, fontRendererObj, width / 2 - (200 / 2), height / 2 - (16 / 2) - 8, 200, 16);
 		textbox.setMaxStringLength(tweetLengh);
 		textbox.setFocused(true);
@@ -36,11 +37,11 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 		if (uploading) {
 			buttonList.clear();
-			drawCenteredString(fontRendererObj, I18n.format("uploading") + "...", width / 2, height / 2, 0xFFFFFF);
+			drawCenteredString(fontRendererObj, I18n.format(UPLOADING) + "...", width / 2, height / 2, 0xFFFFFF);
 		} else {
 			textbox.drawTextBox();
-			drawString(fontRendererObj, I18n.format("composetweet") + ":", dialogX + 5, height / 2 - 28, 0xFFFFFF);
-			drawString(fontRendererObj, I18n.format("remainingletters") + ":", width / 2 - 5, height / 2 + 5, 0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(COMPOSE_TWEET) + ":", dialogX + 5, height / 2 - 28, 0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(REMAINING_LETTERS) + ":", width / 2 - 5, height / 2 + 5, 0xFFFFFF);
 			drawString(fontRendererObj, Integer.toString(tweetLengh - textbox.getText().length()), width / 2 + 84, height / 2 + 5, 0xFFFFFF);
 		}
 	}

@@ -1,5 +1,7 @@
 package com.thatapplefreak.voxelcam.gui.upload;
 
+import static com.thatapplefreak.voxelcam.Translations.WORKING;
+
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -20,7 +22,7 @@ public class WorkingDialogPopup extends GuiDialogBox {
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		super.drawDialog(mouseX, mouseY, f);
-		drawCenteredString(fontRendererObj, I18n.format("working"), width / 2 - (150 / 2), height / 2 - 37, 0xFFFFFF);
+		drawCenteredString(fontRendererObj, I18n.format(WORKING), width / 2 - (150 / 2), height / 2 - 37, 0xFFFFFF);
 	}
 
 	@Override

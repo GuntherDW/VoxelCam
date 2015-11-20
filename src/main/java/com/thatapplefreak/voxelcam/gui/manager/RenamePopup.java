@@ -1,5 +1,7 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
+import static com.thatapplefreak.voxelcam.Translations.RENAME;
+
 import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
@@ -20,7 +22,7 @@ public class RenamePopup extends GuiDialogBox implements ScreenshotIncapable {
 	private String oldText;
 
 	public RenamePopup(GuiScreen parentScreen, VoxelCamIO images) {
-		super(parentScreen, 200, 75, I18n.format("rename"));
+		super(parentScreen, 200, 75, I18n.format(RENAME));
 		this.oldText = FilenameUtils.getBaseName(images.getSelectedPhoto().getName());
 	}
 

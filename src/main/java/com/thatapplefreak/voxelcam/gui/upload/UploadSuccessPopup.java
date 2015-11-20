@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.gui.upload;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.net.Request;
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -16,7 +17,7 @@ public class UploadSuccessPopup  extends GuiDialogBox {
 	private GuiButton btnView, btnClipboard, btnUndo;
 
 	public UploadSuccessPopup(GuiScreen parentScreen, String url, Request<?> undo) {
-		super(parentScreen, 300, 80, I18n.format("imguruploadsuccess"));
+		super(parentScreen, 300, 80, I18n.format(UPLOAD_SUCCESS));
 		this.url = url;
 		this.undo = undo;
 	}
@@ -24,23 +25,18 @@ public class UploadSuccessPopup  extends GuiDialogBox {
 	@Override
 	protected void onInitDialog() {
 		btnCancel.visible = false;
-		btnView = new GuiButton(100, dialogX + dialogWidth - 248, dialogY + dialogHeight - 22, 60, 20, I18n.format("open"));
+		btnView = new GuiButton(100, dialogX + dialogWidth - 248, dialogY + dialogHeight - 22, 60, 20, I18n.format(OPEN));
 		buttonList.add(btnView);
-		btnClipboard = new GuiButton(200, dialogX + dialogWidth - 186, dialogY + dialogHeight - 22, 60, 20, I18n.format("copylink"));
+		btnClipboard = new GuiButton(200, dialogX + dialogWidth - 186, dialogY + dialogHeight - 22, 60, 20, I18n.format(COPY_LINK));
 		buttonList.add(btnClipboard);
-		btnUndo = new GuiButton(300, btnCancel.xPosition, btnCancel.yPosition, 60, 20, I18n.format("undo"));
+		btnUndo = new GuiButton(300, btnCancel.xPosition, btnCancel.yPosition, 60, 20, I18n.format(UNDO));
 		buttonList.add(btnUndo);
 	}
 	
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
 		if (guibutton.id == btnUndo.id) {
-			try {
-				VoxelCamCore.instance().getImagePoster().post(undo);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			VoxelCamCore.instance().getImagePoster().post(undo, null);
 			closeDialog();
 		} else if (guibutton.id == btnView.id) {
 			BrowserOpener.openURLstringInBrowser(url);

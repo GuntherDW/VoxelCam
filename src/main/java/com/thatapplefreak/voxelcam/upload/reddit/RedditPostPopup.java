@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,14 +27,14 @@ public class RedditPostPopup extends GuiDialogBox implements IRedditPostCallback
 	private boolean posting = false;;
 
 	public RedditPostPopup(GuiScreen parentScreen, File toPost) {
-		super(parentScreen, 250, 130, I18n.format("postto") + " Reddit"); //TODO Translate
+		super(parentScreen, 250, 130, I18n.format(POST_TO, "Reddit"));
 		this.toPost = toPost;
 	}
 	
 	@Override
 	protected void onInitDialog() {
 		super.onInitDialog();
-		btnOk.displayString = I18n.format("post");
+		btnOk.displayString = I18n.format(POST);
 		titleField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 10, dialogY + 25, 230, 20, FilenameUtils.getBaseName(toPost.getName()));
 		subredditField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 10, dialogY + 70, 230, 20, "minecraft");
 	}
@@ -44,17 +45,17 @@ public class RedditPostPopup extends GuiDialogBox implements IRedditPostCallback
 		subredditField.setVisible(!posting);
 		if (!posting) {
 			if (failed) {
-				drawCenteredString(fontRendererObj, I18n.format("failedtopost"), dialogX + dialogWidth / 2, dialogY + dialogHeight - 35, 0xFF0000);
+				drawCenteredString(fontRendererObj, I18n.format(FAILED_TO_POST), dialogX + dialogWidth / 2, dialogY + dialogHeight - 35, 0xFF0000);
 			}
-			drawString(fontRendererObj, I18n.format("posttitle") + ":", dialogX + 10, dialogY + 10, 0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(POST_TITLE) + ":", dialogX + 10, dialogY + 10, 0xFFFFFF);
 			titleField.drawTextBox();
-			drawString(fontRendererObj, I18n.format("subreddit") + ":", dialogX + 10,	dialogY + 55, 0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(SUBREDDIT) + ":", dialogX + 10,	dialogY + 55, 0xFFFFFF);
 			subredditField.drawTextBox();
 		} else {
-			drawCenteredString(fontRendererObj, I18n.format("posting") + "...", dialogX + dialogWidth / 2, dialogY + dialogHeight / 2 - 10, 0xFFFFFF);
+			drawCenteredString(fontRendererObj, I18n.format(POSTING) + "...", dialogX + dialogWidth / 2, dialogY + dialogHeight / 2 - 10, 0xFFFFFF);
 		}
 		
-		if (subredditField.getText().equals("mylittlepony")) { //EE
+		if ("mylittlepony".equals(subredditField.getText())) { //EE
 			setTexMapSize(180);
 			drawTexturedModalRect(karmapony, width - 150, height - 130, width, height, 0, 0, 180, 163);
 		}

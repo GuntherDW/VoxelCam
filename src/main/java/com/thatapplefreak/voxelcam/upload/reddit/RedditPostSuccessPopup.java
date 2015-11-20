@@ -1,5 +1,10 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
+import static com.thatapplefreak.voxelcam.Translations.COPY_LINK;
+import static com.thatapplefreak.voxelcam.Translations.OPEN;
+import static com.thatapplefreak.voxelcam.Translations.POST_SUCCESS;
+import static com.thatapplefreak.voxelcam.Translations.REDDIT_POST_SUCCESS;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
@@ -18,7 +23,7 @@ public class RedditPostSuccessPopup extends GuiDialogBox implements ScreenshotIn
 	private GuiButton btnView, btnClipboard;
 
 	public RedditPostSuccessPopup(GuiScreen parentScreen, String postUrl) {
-		super(parentScreen, 365, 80, I18n.format("redditpostsuccess"));
+		super(parentScreen, 365, 80, I18n.format(REDDIT_POST_SUCCESS));
 		this.url = postUrl;
 	}
 	
@@ -26,9 +31,9 @@ public class RedditPostSuccessPopup extends GuiDialogBox implements ScreenshotIn
 	protected void onInitDialog() {
 		btnCancel.visible = false;
 		btnCancel.enabled = false;
-		btnView = new GuiButton(100, dialogX + dialogWidth - 186, dialogY + dialogHeight - 22, 60, 20, I18n.format("open"));
+		btnView = new GuiButton(100, dialogX + dialogWidth - 186, dialogY + dialogHeight - 22, 60, 20, I18n.format(OPEN));
 		buttonList.add(btnView);
-		btnClipboard = new GuiButton(200, dialogX + dialogWidth - 124, dialogY + dialogHeight - 22, 60, 20, I18n.format("copylink"));
+		btnClipboard = new GuiButton(200, dialogX + dialogWidth - 124, dialogY + dialogHeight - 22, 60, 20, I18n.format(COPY_LINK));
 		buttonList.add(btnClipboard);
 	}
 	
@@ -45,7 +50,7 @@ public class RedditPostSuccessPopup extends GuiDialogBox implements ScreenshotIn
 	
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
-		drawCenteredString(fontRendererObj, I18n.format("postsuccess"), dialogX + (dialogWidth / 2), dialogY + 18, 0xFFFFAA00);
+		drawCenteredString(fontRendererObj, I18n.format(POST_SUCCESS), dialogX + (dialogWidth / 2), dialogY + 18, 0xFFFFAA00);
 		drawCenteredString(fontRendererObj, this.url, dialogX + (dialogWidth / 2), dialogY + 32, 0xFFFFFF55);
 	}
 

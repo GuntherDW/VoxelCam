@@ -1,5 +1,12 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
+import static com.thatapplefreak.voxelcam.Translations.LOGGING_IN;
+import static com.thatapplefreak.voxelcam.Translations.LOGIN;
+import static com.thatapplefreak.voxelcam.Translations.LOGIN_FAIL_PLEASE_TRY_AGAIN;
+import static com.thatapplefreak.voxelcam.Translations.PASSWORD;
+import static com.thatapplefreak.voxelcam.Translations.PLEASE_LOGIN_TO;
+import static com.thatapplefreak.voxelcam.Translations.USERNAME;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -20,14 +27,14 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 	private GuiTextFieldEx usernameField,passwordField;
 
 	public RedditLoginPopup(GuiScreen parentScreen, File toPost) {
-		super(parentScreen, 200, 100, I18n.format("pleaseloginto") + " Reddit"); //TODO Translate
+		super(parentScreen, 200, 100, I18n.format(PLEASE_LOGIN_TO) + " Reddit"); //TODO Translate
 		this.toPost = toPost;
 	}
 	
 	@Override
 	protected void onInitDialog() {
 		super.onInitDialog();
-		btnOk.displayString = I18n.format("login"); //TODO Traslate
+		btnOk.displayString = I18n.format(LOGIN); //TODO Traslate
 		// FIXME TODO XXX
 		usernameField = new GuiTextFieldEx(0, fontRendererObj, dialogX + 65, dialogY + 18, 130, 15, "");// config.getRedditUsername());
 		passwordField = new GuiTextFieldEx(1, fontRendererObj, dialogX + 65, dialogY + 48, 130, 15, "");//, config.getRedditPassword());
@@ -41,14 +48,14 @@ public class RedditLoginPopup extends GuiDialogBox implements ILoginCallback, Sc
 			usernameField.setVisible(true);
 			passwordField.setVisible(true);
 			if (failed) {
-				drawCenteredString(fontRendererObj, I18n.format("loginfailpleasetryagain"), dialogX + dialogWidth / 2, dialogY + 4, 0xFF0000);
+				drawCenteredString(fontRendererObj, I18n.format(LOGIN_FAIL_PLEASE_TRY_AGAIN), dialogX + dialogWidth / 2, dialogY + 4, 0xFF0000);
 			}
-			drawString(fontRendererObj, I18n.format("username") + ":", dialogX + 5, dialogY + 20,	0xFFFFFF);
-			drawString(fontRendererObj, I18n.format("password") + ":", dialogX + 5, dialogY + 50,	0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(USERNAME) + ":", dialogX + 5, dialogY + 20,	0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(PASSWORD) + ":", dialogX + 5, dialogY + 50,	0xFFFFFF);
 		} else {
 			usernameField.setVisible(false);
 			passwordField.setVisible(false);
-			drawCenteredString(fontRendererObj, I18n.format("loggingin") + "...", dialogX + dialogWidth / 2, dialogY + dialogHeight / 2 - 10, 0xFFFFFF);
+			drawCenteredString(fontRendererObj, I18n.format(LOGGING_IN) + "...", dialogX + dialogWidth / 2, dialogY + dialogHeight / 2 - 10, 0xFFFFFF);
 		}
 		usernameField.drawTextBox();
 		passwordField.drawTextBox();

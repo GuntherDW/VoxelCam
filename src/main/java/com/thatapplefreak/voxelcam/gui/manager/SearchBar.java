@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -430,7 +431,7 @@ public class SearchBar extends Gui {
 				var9 = this.fontRenderer.drawStringWithShadow(var10, var7, var8, var1);
 			} else {
 				if (!isFocused) {
-					drawString(fontRenderer, I18n.format("search"), var7, var8, 0xa0a0a0);
+					drawString(fontRenderer, I18n.format(SEARCH), var7, var8, 0xa0a0a0);
 				}
 			}
 

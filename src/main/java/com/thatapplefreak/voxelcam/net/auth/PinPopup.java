@@ -1,5 +1,7 @@
 package com.thatapplefreak.voxelcam.net.auth;
 
+import static com.thatapplefreak.voxelcam.Translations.PLEASE_ENTER_PIN;
+
 import java.io.IOException;
 
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -15,7 +17,7 @@ public class PinPopup extends GuiDialogBox {
 	private boolean cancelled;
 
 	public PinPopup(LoginPopup login) {
-		super(login.getParentScreen(), 200, 75, I18n.format("pleaseenterpin"));
+		super(login.getParentScreen(), 200, 75, I18n.format(PLEASE_ENTER_PIN));
 	}
 
 	@Override

@@ -1,4 +1,8 @@
 package com.thatapplefreak.voxelcam;
+import static com.thatapplefreak.voxelcam.Translations.SAVING_PLEASE_WAIT;
+import static com.thatapplefreak.voxelcam.Translations.SAVING_SCREENSHOT;
+import static com.thatapplefreak.voxelcam.Translations.SCREENSHOTS;
+import static com.thatapplefreak.voxelcam.Translations.WRITING;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -113,7 +117,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 					} else {
 						ChatMessageBuilder cmb = new ChatMessageBuilder();
 						cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-						cmb.append(" " + I18n.format("savingpleasewait"));
+						cmb.append(" " + I18n.format(SAVING_PLEASE_WAIT));
 						cmb.showChatMessageIngame();
 					}
 				} else if (minecraft.currentScreen instanceof GuiScreenShotManager) {
@@ -130,8 +134,8 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 
 		// Status Message
 		if (minecraft.inGameHasFocus && !minecraft.gameSettings.showDebugInfo) {
-			savingStatusMessage.setText(I18n.format("savingscreenshot") + " (" + screenshot.getSavePercent()
-					+ "%) " + (screenshot.isWritingToFile() ? I18n.format("writing") + "..." : ""));
+			savingStatusMessage.setText(I18n.format(SAVING_SCREENSHOT) + " (" + screenshot.getSavePercent()
+					+ "%) " + (screenshot.isWritingToFile() ? I18n.format(WRITING) + "..." : ""));
 			savingStatusMessage.setVisible(screenshotIsSaving);
 		}
 	}
@@ -202,7 +206,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		}
 		ChatMessageBuilder cmb = new ChatMessageBuilder();
 		cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-		cmb.append(" " + I18n.format("savingscreenshot"));
+		cmb.append(" " + I18n.format(SAVING_SCREENSHOT));
 		message.set(cmb.getMessage());
 		return false;
 	}
@@ -215,10 +219,10 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		try {
 			Class<?> customMainMenuClass = Class.forName("com.thevoxelbox.voxelmenu.GuiMainMenuVoxelBox");
 			Method mRegisterCustomScreen = customMainMenuClass.getDeclaredMethod("registerCustomScreen", String.class, Class.class, String.class);
-			mRegisterCustomScreen.invoke(null, "right", GuiScreenShotManager.class, I18n.format("screenshots"));
+			mRegisterCustomScreen.invoke(null, "right", GuiScreenShotManager.class, I18n.format(SCREENSHOTS));
 			Class<?> ingameGuiClass = Class.forName("com.thevoxelbox.voxelmenu.ingame.GuiIngameMenu");
 			mRegisterCustomScreen = ingameGuiClass.getDeclaredMethod("registerCustomScreen", String.class, Class.class, String.class);
-			mRegisterCustomScreen.invoke(null, "", GuiScreenShotManager.class, I18n.format("screenshots"));
+			mRegisterCustomScreen.invoke(null, "", GuiScreenShotManager.class, I18n.format(SCREENSHOTS));
 			voxelMenuExists = true;
 		} catch (ClassNotFoundException ex) {
 			// This means VoxelMenu does not exist

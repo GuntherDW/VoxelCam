@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.net.auth;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import java.net.URL;
 
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -28,7 +29,7 @@ public class LoginPopup extends GuiDialogBox {
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		super.drawDialog(mouseX, mouseY, f);
-		String auth = I18n.format("auth", this.auth.getName());
+		String auth = I18n.format(AUTH, this.auth.getName());
 		fontRendererObj.drawSplitString(auth, width/2-150/2, height/2-37, width, 0xFFFFFF);
 //		drawString(fontRendererObj, I18n.format("twitauthline1"), width / 2 - (150 / 2), height / 2 - 37, 0xFFFFFF);
 //		drawString(fontRendererObj, I18n.format("twitauthline2"), width / 2 - (150 / 2) - 25, height / 2 - 27, 0xFFFFFF);

@@ -1,5 +1,12 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
+import static com.thatapplefreak.voxelcam.Translations.BACK;
+import static com.thatapplefreak.voxelcam.Translations.DELETE;
+import static com.thatapplefreak.voxelcam.Translations.EDIT;
+import static com.thatapplefreak.voxelcam.Translations.OPEN_SCREENSHOTS_FOLDER;
+import static com.thatapplefreak.voxelcam.Translations.POST_TO;
+import static com.thatapplefreak.voxelcam.Translations.RENAME;
+
 import java.awt.Desktop;
 import java.io.IOException;
 
@@ -58,23 +65,23 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 		selector = new PhotoSelector(this, images, 125);
 		selector.registerScrollButtons(buttonList, 7, 8);
 
-		btnBack = new GuiButton(0, 10, height - 30, 70, 20, I18n.format("back"));
+		btnBack = new GuiButton(0, 10, height - 30, 70, 20, I18n.format(BACK));
 		buttonList.add(btnBack);
 
-		btnRename = new GuiButton(1, width - (70 * 3) - 5, height - 45, 70, 20, I18n.format("rename"));
+		btnRename = new GuiButton(1, width - (70 * 3) - 5, height - 45, 70, 20, I18n.format(RENAME));
 		buttonList.add(btnRename);
 
-		btnDelete = new GuiButton(2, width - (70 * 2) - 5, height - 45, 70, 20, I18n.format("delete"));
+		btnDelete = new GuiButton(2, width - (70 * 2) - 5, height - 45, 70, 20, I18n.format(DELETE));
 		buttonList.add(btnDelete);
 
-		btnEditPicture = new GuiButton(3, width - (70 * 1) - 5, height - 45, 70, 20, I18n.format("edit"));
+		btnEditPicture = new GuiButton(3, width - (70 * 1) - 5, height - 45, 70, 20, I18n.format(EDIT));
 		buttonList.add(btnEditPicture);
 //		btnEditPicture.enabled = false;
 
-		btnOpenFolder = new GuiButton(4, width - (70 * 3) - 5, height - 25, 140, 20, I18n.format("openscreenshotsfolder"));
+		btnOpenFolder = new GuiButton(4, width - (70 * 3) - 5, height - 25, 140, 20, I18n.format(OPEN_SCREENSHOTS_FOLDER));
 		buttonList.add(btnOpenFolder);
 
-		btnPost = new GuiButton(5, width - (70 * 1) - 5, height - 25, 70, 20, I18n.format("postto") + "...");
+		btnPost = new GuiButton(5, width - (70 * 1) - 5, height - 25, 70, 20, I18n.format(POST_TO) + "...");
 		buttonList.add(btnPost);
 
 	}
