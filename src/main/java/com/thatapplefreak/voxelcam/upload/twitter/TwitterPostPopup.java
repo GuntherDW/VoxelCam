@@ -1,16 +1,27 @@
 package com.thatapplefreak.voxelcam.upload.twitter;
 
-import static com.thatapplefreak.voxelcam.Translations.*;
+import static com.thatapplefreak.voxelcam.Translations.COMPOSE_TWEET;
+import static com.thatapplefreak.voxelcam.Translations.POST;
+import static com.thatapplefreak.voxelcam.Translations.POST_TO;
+import static com.thatapplefreak.voxelcam.Translations.REMAINING_LETTERS;
+import static com.thatapplefreak.voxelcam.Translations.UPLOADING;
+
 import java.io.File;
 import java.io.IOException;
 
+import com.thatapplefreak.voxelcam.gui.upload.UploadFailedPopup;
+import com.thatapplefreak.voxelcam.gui.upload.UploadSuccessPopup;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.Request;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterDestroy;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterStatusResponse;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 
-public class TwitterPostPopup extends GuiDialogBox {
+public class TwitterPostPopup extends GuiDialogBox implements Callback<TwitterStatusResponse> {
 
 	private boolean uploading = false;
 
@@ -63,9 +74,19 @@ public class TwitterPostPopup extends GuiDialogBox {
 
 	@Override
 	public boolean validateDialog() {
-		TwitterHandler.doTwitter(textbox.getText(), toPost, this.getParentScreen());
+		TwitterHandler.doTwitter(textbox.getText(), toPost, this);
 		uploading = true;
 		return false;
+	}
+
+	@Override
+	public void onSuccess(TwitterStatusResponse response) {
+		mc.displayGuiScreen(new UploadSuccessPopup(getParentScreen(), response.getUrl(), (Request<?>) new TwitterDestroy(response.getId())));
+	}
+
+	@Override
+	public void onFailure(Throwable t) {
+		mc.displayGuiScreen(new UploadFailedPopup(getParentScreen(), t.getMessage()));
 	}
 
 }

@@ -1,16 +1,18 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
-import static com.thatapplefreak.voxelcam.Translations.*;
+import static com.thatapplefreak.voxelcam.Translations.POST_TO;
+import static com.thatapplefreak.voxelcam.Translations.UPLOADING;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
-import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.gui.upload.UploadFailedPopup;
 import com.thatapplefreak.voxelcam.gui.upload.UploadSuccessPopup;
 import com.thatapplefreak.voxelcam.gui.upload.WorkingDialogPopup;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.Poster;
 import com.thatapplefreak.voxelcam.net.imgur.ImgurDelete;
 import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
 import com.thatapplefreak.voxelcam.net.twitter.TwitterAuth;
@@ -20,10 +22,9 @@ import com.thatapplefreak.voxelcam.upload.dropbox.DropboxHandler;
 import com.thatapplefreak.voxelcam.upload.googleDrive.GoogleDriveHandler;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurHandler;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditHandler;
-import com.thatapplefreak.voxelcam.upload.reddit.RedditLoginPopup;
-import com.thatapplefreak.voxelcam.upload.reddit.RedditPostPopup;
 import com.thatapplefreak.voxelcam.upload.twitter.TwitterPostPopup;
 import com.voxelmodpack.common.gui.GuiDialogBox;
+import com.voxelmodpack.common.util.BrowserOpener;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -39,13 +40,11 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 	private volatile GuiScreen completeDialog;
 	private File toUpload;
 	private boolean uploading = false;
-	private ImgurHandler imgur;
 	private DropboxHandler dropbox;
 	private GoogleDriveHandler gDrive;
 
 	public PostPopup(GuiScreen parentScreen, File toUpload) {
 		super(parentScreen, 180, 120, I18n.format(POST_TO) + "...");
-		this.imgur = new ImgurHandler();
 		this.dropbox = new DropboxHandler();
 		this.gDrive = new GoogleDriveHandler();
 		this.toUpload = toUpload;
@@ -74,7 +73,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		}
 
 		btnFacebook.enabled = false;
-		btnReddit.enabled = false;
+		//btnReddit.enabled = false;
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		if (guibutton.equals(btnCancel)) {
 			closeDialog();
 		} else if (guibutton.equals(btnImgur)) {
-			imgur.upload(toUpload, new Callback<ImgurUploadResponse>() {
+			ImgurHandler.doImgur(toUpload, new Callback<ImgurUploadResponse>() {
 				@Override
 				public void onSuccess(ImgurUploadResponse response) {
 					if (response.isSuccessful()) {
@@ -120,8 +119,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 
 				@Override
 				public void onFailure(Throwable t) {
-					Minecraft mc = Minecraft.getMinecraft();
-					mc.displayGuiScreen(new UploadFailedPopup(mc.currentScreen, t.getMessage()));
+					onUploadCompleted(new UploadFailedPopup(getParentScreen(), t.getMessage()));
 				}
 			});
 			this.uploading = true;
@@ -130,9 +128,9 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnTwitter)) {
 			TwitterPostPopup twitter = new TwitterPostPopup(getParentScreen(), toUpload);
-			if (!VoxelCamCore.instance().getImagePoster().isLoggedIn("Twitter")) {
+			if (!Poster.instance.isLoggedIn("Twitter")) {
 				// try to log in
-				VoxelCamCore.instance().getImagePoster().authenticate(new TwitterAuth());
+				Poster.instance.authenticate(new TwitterAuth());
 				mc.displayGuiScreen(new WorkingDialogPopup(twitter));
 			} else {
 				mc.displayGuiScreen(twitter);
@@ -141,11 +139,19 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			gDrive.upload(toUpload, new FileCallback());
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnReddit)) {
-			if (!RedditHandler.isLoggedIn()) {
-				mc.displayGuiScreen(new RedditLoginPopup(getParentScreen(), toUpload));
-			} else {
-				mc.displayGuiScreen(new RedditPostPopup(getParentScreen(), toUpload));
-			}
+			RedditHandler.doRedditPost(toUpload, new Callback<URI>() {
+				@Override
+				public void onSuccess(URI link) {
+					BrowserOpener.openURIinBrowser(link);
+					closeDialog();
+				}
+
+				@Override
+				public void onFailure(Throwable t) {
+					onUploadCompleted(new UploadFailedPopup(getParentScreen(), t.getMessage()));
+				}
+			});
+			uploading = true;
 		}
 	}
 

@@ -1,7 +1,11 @@
 package com.thatapplefreak.voxelcam.gui.upload;
 
-import static com.thatapplefreak.voxelcam.Translations.*;
-import com.thatapplefreak.voxelcam.VoxelCamCore;
+import static com.thatapplefreak.voxelcam.Translations.COPY_LINK;
+import static com.thatapplefreak.voxelcam.Translations.OPEN;
+import static com.thatapplefreak.voxelcam.Translations.UNDO;
+import static com.thatapplefreak.voxelcam.Translations.UPLOAD_SUCCESS;
+
+import com.thatapplefreak.voxelcam.net.Poster;
 import com.thatapplefreak.voxelcam.net.Request;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 import com.voxelmodpack.common.util.BrowserOpener;
@@ -10,7 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
-public class UploadSuccessPopup  extends GuiDialogBox {
+public class UploadSuccessPopup extends GuiDialogBox implements Runnable {
 	
 	private final String url;
 	private Request<?> undo;
@@ -36,7 +40,7 @@ public class UploadSuccessPopup  extends GuiDialogBox {
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
 		if (guibutton.id == btnUndo.id) {
-			VoxelCamCore.instance().getImagePoster().post(undo, null);
+			new Thread(this, "Delete Thread").start();
 			closeDialog();
 		} else if (guibutton.id == btnView.id) {
 			BrowserOpener.openURLstringInBrowser(url);
@@ -60,6 +64,11 @@ public class UploadSuccessPopup  extends GuiDialogBox {
 
 	@Override
 	public void onSubmit() {
+	}
+
+	@Override
+	public void run() {
+		Poster.instance.post(undo, null);
 	}
 
 }

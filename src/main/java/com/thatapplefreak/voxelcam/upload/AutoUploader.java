@@ -10,6 +10,7 @@ import java.io.File;
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.Poster;
 import com.thatapplefreak.voxelcam.net.imgur.ImgurUpload;
 import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
 import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
@@ -50,7 +51,7 @@ public abstract class AutoUploader {
 	}
 
 	private static void uploadToImgur(File image) {
-		VoxelCamCore.instance().getImagePoster().post(new ImgurUpload(image), new Callback<ImgurUploadResponse>() {
+		Poster.instance.post(new ImgurUpload(image), new Callback<ImgurUploadResponse>() {
 			@Override
 			public void onSuccess(ImgurUploadResponse response) {
 				if (response.isSuccessful()) {

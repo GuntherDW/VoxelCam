@@ -40,8 +40,13 @@ import oauth.signpost.exception.OAuthException;
 @ExposableOptions(strategy = ConfigStrategy.Unversioned, filename = "voxelcamtokens")
 public class Poster implements Exposable {
 
+	public static final Poster instance = new Poster();
+
 	@Expose
 	private Map<String, String> tokens = Maps.newHashMap();
+
+	private Poster() {
+	}
 
 	public <R> void post(Request<R> request, Callback<R> callback) {
 		try {

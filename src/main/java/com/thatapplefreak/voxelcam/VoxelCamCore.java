@@ -69,7 +69,6 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	private StatusMessage savingStatusMessage;
 	private ScreenshotTaker screenshot;
 	private BigScreenshotTaker bigScreenshot;
-	private Poster imagePoster;
 
 	/**
 	 * Initialize the mod
@@ -83,12 +82,11 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		}
 		mainMenu = new MainMenuHandler();
 		screenshot = new ScreenshotTaker(screenshotsDir);
-		imagePoster = new Poster();
 
 		// Register the Keys that VoxelCam uses
 		LiteLoader.getInput().registerKeyBinding(VoxelCamConfig.KEY_OPENSCREENSHOTMANAGER);
 		// Register the exposable for tokens.
-		LiteLoader.getInstance().registerExposable(getImagePoster(), null);
+		LiteLoader.getInstance().registerExposable(Poster.instance, null);
 
 		// Add the configuation panel to VoxelCommons awareness
 		SettingsPanelManager.addSettingsPanel("Camera", GuiVoxelCamSettingsPanel.class);
@@ -237,10 +235,6 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 
 	public static VoxelCamCore instance() {
 		return instance;
-	}
-
-	public Poster getImagePoster() {
-		return imagePoster;
 	}
 
 	// Leave empty
