@@ -1,5 +1,7 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
+import static com.thatapplefreak.voxelcam.Translations.SAVED_SCREENSHOT_AS;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +95,7 @@ public class ScreenshotTaker {
 					MetaDataHandler.writeMetaData(saveTo);
 					ChatMessageBuilder cmb = new ChatMessageBuilder();
 					cmb.append("[VoxelCam]", EnumChatFormatting.DARK_RED, false);
-					cmb.append(" " + I18n.format("savedscreenshotas") + ": ");
+					cmb.append(" " + I18n.format(SAVED_SCREENSHOT_AS) + ": ");
 					cmb.append(saveTo.getName(), saveTo.getPath(), false);
 					cmb.showChatMessageIngame();
 					screenshotIsSaving = false;

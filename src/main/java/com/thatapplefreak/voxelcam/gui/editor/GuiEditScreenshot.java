@@ -1,5 +1,8 @@
 package com.thatapplefreak.voxelcam.gui.editor;
 
+import static com.thatapplefreak.voxelcam.Translations.DONE;
+import static com.thatapplefreak.voxelcam.Translations.LOADING;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -55,14 +58,14 @@ public class GuiEditScreenshot extends GuiScreenEx {
 			};
 		}.start();
 		
-		buttonList.add(btnDone = new GuiButton(0, 10, height - 30, 70, 20, I18n.format("done")));
+		buttonList.add(btnDone = new GuiButton(0, 10, height - 30, 70, 20, I18n.format(DONE)));
 	}
 	
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		drawDefaultBackground();
 		if (loading) {
-			drawCenteredString(fontRendererObj, I18n.format("loading") + "...", width / 2, height / 2, 0xffffff);
+			drawCenteredString(fontRendererObj, I18n.format(LOADING) + "...", width / 2, height / 2, 0xffffff);
 			return;
 		}
 		

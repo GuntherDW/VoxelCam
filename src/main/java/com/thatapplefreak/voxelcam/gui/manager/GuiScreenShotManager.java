@@ -1,10 +1,18 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
+import static com.thatapplefreak.voxelcam.Translations.BACK;
+import static com.thatapplefreak.voxelcam.Translations.DELETE;
+import static com.thatapplefreak.voxelcam.Translations.EDIT;
+import static com.thatapplefreak.voxelcam.Translations.OPEN_SCREENSHOTS_FOLDER;
+import static com.thatapplefreak.voxelcam.Translations.POST_TO;
+import static com.thatapplefreak.voxelcam.Translations.RENAME;
+
 import java.awt.Desktop;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
+import com.google.common.base.Objects;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.thatapplefreak.voxelcam.gui.editor.GuiEditScreenshot;
 import com.thatapplefreak.voxelcam.imagehandle.GLImageMemoryHandler;
@@ -46,36 +54,35 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	private static final float frameScale = 22F / 30F;
 
 	public GuiScreenShotManager() {
-		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, null);
+		images = new VoxelCamIO();
+		frame = new ScalePhotoFrame(this, (int) (width - (width * (frameScale))), 10, frameScale, images.getSelectedPhoto());
 	}
 
 	@Override
 	public void initGui() {
-
-		images = new VoxelCamIO();
 
 		searchBar = new SearchBar(fontRendererObj, 11, 14, 50, 13);
 
 		selector = new PhotoSelector(this, images, 125);
 		selector.registerScrollButtons(buttonList, 7, 8);
 
-		btnBack = new GuiButton(0, 10, height - 30, 70, 20, I18n.format("back"));
+		btnBack = new GuiButton(0, 10, height - 30, 70, 20, I18n.format(BACK));
 		buttonList.add(btnBack);
 
-		btnRename = new GuiButton(1, width - (70 * 3) - 5, height - 45, 70, 20, I18n.format("rename"));
+		btnRename = new GuiButton(1, width - (70 * 3) - 5, height - 45, 70, 20, I18n.format(RENAME));
 		buttonList.add(btnRename);
 
-		btnDelete = new GuiButton(2, width - (70 * 2) - 5, height - 45, 70, 20, I18n.format("delete"));
+		btnDelete = new GuiButton(2, width - (70 * 2) - 5, height - 45, 70, 20, I18n.format(DELETE));
 		buttonList.add(btnDelete);
 
-		btnEditPicture = new GuiButton(3, width - (70 * 1) - 5, height - 45, 70, 20, I18n.format("edit"));
+		btnEditPicture = new GuiButton(3, width - (70 * 1) - 5, height - 45, 70, 20, I18n.format(EDIT));
 		buttonList.add(btnEditPicture);
 		btnEditPicture.enabled = false;
 
-		btnOpenFolder = new GuiButton(4, width - (70 * 3) - 5, height - 25, 140, 20, I18n.format("openscreenshotsfolder"));
+		btnOpenFolder = new GuiButton(4, width - (70 * 3) - 5, height - 25, 140, 20, I18n.format(OPEN_SCREENSHOTS_FOLDER));
 		buttonList.add(btnOpenFolder);
 
-		btnPost = new GuiButton(5, width - (70 * 1) - 5, height - 25, 70, 20, I18n.format("postto") + "...");
+		btnPost = new GuiButton(5, width - (70 * 1) - 5, height - 25, 70, 20, I18n.format(POST_TO));
 		buttonList.add(btnPost);
 
 	}
@@ -98,7 +105,7 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	public void updateScreen() {
 		super.updateScreen();
 		images.updateScreenShotFilesList(searchBar.getText());
-		if (frame.getPhoto() != images.getSelectedPhoto()) {
+		if (!Objects.equal(frame.getPhoto(), images.getSelectedPhoto())) {
 
 			frame.setPhoto(images.getSelectedPhoto());
 
@@ -111,7 +118,7 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	@Override
 	protected void actionPerformed(GuiButton btn) {
 		if (btn.equals(btnBack)) {
-			keyTyped('`', 1);
+			mc.displayGuiScreen(null);
 		} else if (btn.equals(btnRename)) {
 			mc.displayGuiScreen(new RenamePopup(this, images));
 		} else if (btn.equals(btnDelete)) {
@@ -151,12 +158,8 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 	}
 
 	@Override
-	protected void keyTyped(char keyChar, int keyCode) {
-		if (keyCode == 1) {
-			GLImageMemoryHandler.requestImageFlush();
-			this.mc.displayGuiScreen((GuiScreen) null);
-			this.mc.setIngameFocus();
-		}
+	protected void keyTyped(char keyChar, int keyCode) throws IOException {
+		super.keyTyped(keyChar, keyCode);
 		searchBar.textboxKeyTyped(keyChar, keyCode);
 		if (!searchBar.isFocused() && btnDelete.enabled) {
 			if (keyChar == 'r') {
@@ -171,6 +174,11 @@ public class GuiScreenShotManager extends GuiScreen implements ScreenshotIncapab
 				images.next();
 			}
 		}
+	}
+
+	@Override
+	public void onGuiClosed() {
+		GLImageMemoryHandler.requestImageFlush();
 	}
 
 }

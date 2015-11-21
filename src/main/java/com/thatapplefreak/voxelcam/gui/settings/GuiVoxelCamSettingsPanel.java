@@ -1,5 +1,11 @@
 package com.thatapplefreak.voxelcam.gui.settings;
 
+import static com.thatapplefreak.voxelcam.Translations.AUTO_UPLOAD_SOCIAL_MEDIA;
+import static com.thatapplefreak.voxelcam.Translations.HEIGHT;
+import static com.thatapplefreak.voxelcam.Translations.MEGA_SCREENSHOT_SETTINGS;
+import static com.thatapplefreak.voxelcam.Translations.TO;
+import static com.thatapplefreak.voxelcam.Translations.WIDTH;
+
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.voxelmodpack.common.properties.ModConfig;
@@ -28,9 +34,9 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		super.initGui();
 
 		// Mega Screenshot settings
-		properties.add(new VoxelPropertyLabel(I18n.format("megascreenshotsettings"), PANEL_LEFT + 15, PANEL_TOP + 10));
-		widthField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOWIDTH, I18n.format("width"), PANEL_LEFT + 20, PANEL_TOP + 25, 40);
-		heightField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOHEIGHT, I18n.format("height"), PANEL_LEFT + 20, PANEL_TOP + 45, 40);
+		properties.add(new VoxelPropertyLabel(I18n.format(MEGA_SCREENSHOT_SETTINGS), PANEL_LEFT + 15, PANEL_TOP + 10));
+		widthField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOWIDTH, I18n.format(WIDTH), PANEL_LEFT + 20, PANEL_TOP + 25, 40);
+		heightField = new VoxelPropertyIntFieldEX(config, VoxelCamConfig.PHOTOHEIGHT, I18n.format(HEIGHT), PANEL_LEFT + 20, PANEL_TOP + 45, 40);
 		widthField.setMaxFieldValue(max);
 		widthField.setMinFieldValue(min);
 		properties.add(widthField);
@@ -71,11 +77,11 @@ public class GuiVoxelCamSettingsPanel extends GuiVoxelBoxSettingsPanel {
 		});
 		properties.add(new VoxelPropertyLabel(I18n.format("memorywarning"), PANEL_LEFT + 10, PANEL_TOP + 65, 0xFF0000));
 	
-		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD, I18n.format("autouploadsocialmedia"), PANEL_LEFT + 10, PANEL_TOP + 80));
+		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD, I18n.format(AUTO_UPLOAD_SOCIAL_MEDIA), PANEL_LEFT + 10, PANEL_TOP + 80));
 		
-		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_IMGUR, I18n.format("to") + " Imgur", PANEL_LEFT + 20, PANEL_TOP + 95));
-		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_DROPBOX, I18n.format("to") + " Dropbox", PANEL_LEFT + 20, PANEL_TOP + 110));
-		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_GOOGLEDRIVE, I18n.format("to") + " Google Drive", PANEL_LEFT + 20, PANEL_TOP + 125));
+		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_IMGUR, I18n.format(TO) + " Imgur", PANEL_LEFT + 20, PANEL_TOP + 95));
+		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_DROPBOX, I18n.format(TO) + " Dropbox", PANEL_LEFT + 20, PANEL_TOP + 110));
+		properties.add(new VoxelPropertyCheckBox(config, VoxelCamConfig.AUTO_UPLOAD_GOOGLEDRIVE, I18n.format(TO) + " Google Drive", PANEL_LEFT + 20, PANEL_TOP + 125));
 	}
 
 	protected void updateFields() {

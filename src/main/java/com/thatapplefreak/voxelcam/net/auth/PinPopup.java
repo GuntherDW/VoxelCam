@@ -1,37 +1,39 @@
-package com.thatapplefreak.voxelcam.upload.twitter;
+package com.thatapplefreak.voxelcam.net.auth;
 
-import java.io.File;
+import static com.thatapplefreak.voxelcam.Translations.PLEASE_ENTER_PIN;
+
 import java.io.IOException;
 
-import com.thatapplefreak.voxelcam.upload.twitter.TwitterHandler.TwitterOauthGrabber;
 import com.voxelmodpack.common.gui.GuiDialogBox;
-import com.voxelmodpack.common.util.BrowserOpener;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 
-public class TwitterPINPopup extends GuiDialogBox {
+public class PinPopup extends GuiDialogBox {
 
 	private GuiTextField pinBox;
-	private File file;
+	private boolean ready;
+	private boolean cancelled;
 
-	public TwitterPINPopup(GuiScreen parentScreen, File file) {
-		super(parentScreen, 200, 75, I18n.format("pleaseenterpin"));
-		this.file = file;
+	public PinPopup(LoginPopup login) {
+		super(login.getParentScreen(), 200, 75, I18n.format(PLEASE_ENTER_PIN));
 	}
 
 	@Override
 	protected void onInitDialog() {
 		pinBox = new GuiTextField(0xFFFFFF, fontRendererObj, width / 2 - (150 / 2), height / 2 - (16 / 2) - 8, 150, 16);
-		BrowserOpener.openURLstringInBrowser(TwitterHandler.requestToken.getAuthorizationURL());
+		// BrowserOpener.openURLstringInBrowser(TwitterHandler.requestToken.getAuthorizationURL());
+	}
+
+	@Override
+	protected void onDialogClosed() {
+		cancelled = true;
 	}
 
 	@Override
 	public void onSubmit() {
-		TwitterOauthGrabber grabber = TwitterHandler.getAGrabber(pinBox.getText(), this);
-		new Thread(grabber).start();
+		ready = true;
 	}
 
 	@Override
@@ -71,6 +73,14 @@ public class TwitterPINPopup extends GuiDialogBox {
 	}
 
 	public void goToPostGUI() {
-		mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), file));
+		mc.displayGuiScreen(getParentScreen());
+	}
+
+	String getPin() {
+		if (ready)
+			return pinBox.getText();
+		if (cancelled)
+			throw new UserCancelledException();
+		return null;
 	}
 }

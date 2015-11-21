@@ -25,6 +25,10 @@ public class VoxelCamIO implements Comparator<File> {
 	 */
 	private int selected = 0;
 
+	public VoxelCamIO() {
+		updateScreenShotFilesList("");
+	}
+	
 	public List<File> getScreenShotFiles() {
 		return ImmutableList.copyOf(screenShotFiles);
 	}
@@ -66,7 +70,8 @@ public class VoxelCamIO implements Comparator<File> {
 
 	@Override
 	public int compare(File o1, File o2) {
-		return (int) ((o2.lastModified() - o1.lastModified()) % 2);
+		long modified = o2.lastModified() - o1.lastModified();
+		return modified > 0 ? 1 : modified < 0 ? -1 : 0;
 	}
 
 	public void next() {

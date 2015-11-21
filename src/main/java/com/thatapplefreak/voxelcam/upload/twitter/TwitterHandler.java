@@ -2,101 +2,61 @@ package com.thatapplefreak.voxelcam.upload.twitter;
 
 import java.io.File;
 
-import com.thatapplefreak.voxelcam.VoxelCamConfig;
-import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.google.common.base.Throwables;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.Poster;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterImage;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterImageResponse;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterStatus;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterStatusResponse;
 
-import net.minecraft.client.resources.I18n;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
+public class TwitterHandler implements Runnable {
 
-public class TwitterHandler {
-	
-	public static final String CONSUMER_KEY = "okIIDosE4TsrRP3JvXufw";
-	public static final String CONSUMER_SECRET = "dFJIErDmYr61YwQfDdAGMAt79dCJGu1mpiflCAa2c";
-
-	public static Twitter twitter = TwitterFactory.getSingleton();
-	public static RequestToken requestToken;
-	
-	private static VoxelCamConfig config = VoxelCamCore.getConfig();
-	
 	private String text;
-	private TwitterPostPopup callbackGui;
+	private File file;
+	private Callback<TwitterStatusResponse> callback;
 
-	static {
-		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
-		try {
-			TwitterHandler.requestToken = twitter.getOAuthRequestToken();
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
+	public static void doTwitter(String text, File screenshot, Callback<TwitterStatusResponse> screen) {
+		new Thread(new TwitterHandler(text, screenshot, screen), "Twitter_Post_Thread").start();
 	}
-	
-	public TwitterHandler(TwitterPostPopup callback) {
-		this.callbackGui = callback;
-	}
-	
-	public void setText(String text) {
+
+	private TwitterHandler(String text, File file, Callback<TwitterStatusResponse> callback) {
 		this.text = text;
+		this.file = file;
+		this.callback = callback;
 	}
 
-	public void doTwitter(final File screenshot) {
-		Long twitterUserID = Long.parseLong(config.getStringProperty(VoxelCamConfig.TWITTERUSERID));
-		String userAuthToken = config.getStringProperty(VoxelCamConfig.TWITTERAUTHTOKEN);
-		String userAuthTokenSecret = config.getStringProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET);
-		twitter.setOAuthAccessToken(new AccessToken(userAuthToken, userAuthTokenSecret, twitterUserID));
-		new Thread("Twitter_Post_Thread") {
+	@Override
+	public void run() {
+		try {
+			Poster.instance.post(new TwitterImage(file), new Callback<TwitterImageResponse>() {
+				@Override
+				public void onSuccess(TwitterImageResponse response) {
+					onImageUpload(response);
+				}
+
+				@Override
+				public void onFailure(Throwable t) {
+					callback.onFailure(t);
+				}
+			});
+		} catch (Exception e) {
+			callback.onFailure(e);
+		}
+	}
+
+	private void onImageUpload(TwitterImageResponse response) {
+		String images = response.getMediaIdString();
+		Poster.instance.post(new TwitterStatus(text + " #VoxelCam", images), new Callback<TwitterStatusResponse>() {
 			@Override
-			public void run() {
-				StatusUpdate statusupdate = new StatusUpdate(text + " #VoxelCam");
-				statusupdate.setMedia(screenshot);
-				try {
-					Status status = twitter.updateStatus(statusupdate);
-					String address = "http://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
-					callbackGui.onUploadComplete(new TwitterUploadSuccessPopup(callbackGui.getParentScreen(), status.getId(), address));
-				} catch (TwitterException e) {
-					callbackGui.onUploadComplete(new TwitterUploadFailedPopup(callbackGui, statusupdate, I18n.format("errorcode") + ": " + Integer.toString(e.getErrorCode())));
-				}
+			public void onSuccess(TwitterStatusResponse response) {
+				callback.onSuccess(response);
 			}
-		}.start();		
-	}	
-	
-	public static TwitterOauthGrabber getAGrabber(String pin, TwitterPINPopup callbackGui) {
-		return new TwitterOauthGrabber(pin, callbackGui);
-	}
-	
-	public static class TwitterOauthGrabber implements Runnable {
-		
-		private String pin;
-		private TwitterPINPopup callbackGui;
-		
-		public TwitterOauthGrabber(String pin, TwitterPINPopup callbackGui) {
-			this.pin = pin;
-			this.callbackGui = callbackGui;
-		}
-		
-		@Override
-		public void run() {
-			AccessToken accessToken = null;
-			while (accessToken == null || accessToken.getToken() == null) {
-				try {
-					accessToken = twitter.getOAuthAccessToken(TwitterHandler.requestToken, pin);
-				} catch (TwitterException e) {
-				}
-			}
-			storeAccessToken(accessToken);
-			callbackGui.goToPostGUI();
-		}
 
-		private void storeAccessToken(AccessToken accessToken) {
-			System.out.println("[VoxelCam] Setting Twitter access token");
-			config.setProperty(VoxelCamConfig.TWITTERAUTHTOKEN, accessToken.getToken());
-			config.setProperty(VoxelCamConfig.TWITTERAUTHTOKENSECRET, accessToken.getTokenSecret());
-			config.setProperty(VoxelCamConfig.TWITTERUSERID, String.valueOf(accessToken.getUserId()));
-		}
+			@Override
+			public void onFailure(Throwable t) {
+				Throwables.propagate(t);
+			}
+		});
 	}
 }

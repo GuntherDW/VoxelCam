@@ -1,6 +1,7 @@
 package com.thatapplefreak.voxelcam.gui.mainmenu;
 
 import com.mumfrey.liteloader.core.LiteLoader;
+import static com.thatapplefreak.voxelcam.Translations.*;
 import com.thatapplefreak.voxelcam.VoxelCamConfig;
 import com.thatapplefreak.voxelcam.VoxelCamCore;
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -24,7 +25,7 @@ public class FirstRunPopup extends GuiDialogBox {
 	@Override
 	protected void onInitDialog() {
 		btnCancel.visible = false;
-		btnOk.displayString = I18n.format("ok");
+		btnOk.displayString = I18n.format(OK);
 		forumLink = new GuiButton(-111195, btnCancel.xPosition, btnCancel.yPosition, 60, 20, I18n.format("moreinfo"));
 		buttonList.add(forumLink);
 	}
@@ -32,15 +33,15 @@ public class FirstRunPopup extends GuiDialogBox {
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		try {
-			drawString(fontRendererObj, I18n.format("welcomeline1") + " " + LiteLoader.getInstance().getMod("VoxelCam").getVersion() + " ", dialogX + 5, dialogY + 5, 0xFFFFFF);
+			drawString(fontRendererObj, I18n.format(WELCOME_LINE_1) + " " + LiteLoader.getInstance().getMod("VoxelCam").getVersion() + " ", dialogX + 5, dialogY + 5, 0xFFFFFF);
 		} catch (Exception e) {
 		}
-		drawString(fontRendererObj, I18n.format("keybindings") + ":", dialogX + 5, dialogY + 20, 0x990000);
-		drawString(fontRendererObj, "H - " + I18n.format("welcomeline2"), dialogX + 10, dialogY + 30, 0x990000);
-		drawString(fontRendererObj, "Shift + F2 - " + I18n.format("welcomeline3"), dialogX + 10, dialogY + 40, 0x990000);
-		drawString(fontRendererObj, "F7 - " + I18n.format("welcomeline4"), dialogX + 10, dialogY + 50, 0x990000);
+		drawString(fontRendererObj, I18n.format(KEYBINDINGS) + ":", dialogX + 5, dialogY + 20, 0x990000);
+		drawString(fontRendererObj, "H - " + I18n.format(WELCOME_LINE_2), dialogX + 10, dialogY + 30, 0x990000);
+		drawString(fontRendererObj, "Shift + F2 - " + I18n.format(WELCOME_LINE_3), dialogX + 10, dialogY + 40, 0x990000);
+		drawString(fontRendererObj, "F7 - " + I18n.format(WELCOME_LINE_4), dialogX + 10, dialogY + 50, 0x990000);
 
-		drawString(fontRendererObj, I18n.format("developer") + ":", dialogX + 5, dialogY + 70, 0x00FFFF);
+		drawString(fontRendererObj, I18n.format(DEVELOPER) + ":", dialogX + 5, dialogY + 70, 0x00FFFF);
 		drawTexturedModalRect(avatarPNG, dialogX + 10, dialogY + 80, dialogX + 75, dialogY + 140, 0, 0, 259, 256);
 		drawString(fontRendererObj, "thatapplefreak", dialogX + 6, dialogY + 141, 0xFFFF00);
 

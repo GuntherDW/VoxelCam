@@ -1,89 +1,50 @@
 package com.thatapplefreak.voxelcam.upload.reddit;
 
 import java.io.File;
-import java.lang.reflect.Method;
+import java.net.URI;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.apache.http.client.utils.URIBuilder;
 
-import com.github.jreddit.entity.User;
-import com.github.jreddit.utils.restclient.HttpRestClient;
-import com.thatapplefreak.voxelcam.upload.UploadCallback;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUpload;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
+import com.google.common.base.Throwables;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
+import com.thatapplefreak.voxelcam.upload.imgur.ImgurHandler;
 
-public abstract class RedditHandler {
-	
-	protected static User reddit;
-	
+public class RedditHandler {
+
+	private static final String SUBMIT_URL = "http://www.reddit.com/submit";
+
 	/**
-	 * user is logged into reddit
-	 */
-	protected static boolean loggedIn = false;
-	
-	/**
-	 * Post image to reddit
+	 * Post image to reddit by opening the browser to the submit page.
+	 *
 	 * @param postTitle
 	 * @param screenshot
 	 */
-	public static void doRedditPost(final String postTitle, final String subreddit, final File screenshot, final IRedditPostCallback callback) {
-		final ImgurUpload poster = new ImgurUpload(screenshot).withTitle(screenshot.getName());
-		poster.start(new UploadCallback<ImgurUploadResponse>() {
-
+	public static void doRedditPost(final File screenshot, final Callback<URI> callback) {
+		ImgurHandler.doImgur(screenshot, new Callback<ImgurUploadResponse>() {
 			@Override
-			public void onHTTPFailure(int responseCode, String responseMessage) {
-				callback.onPostFailure();
+			public void onSuccess(ImgurUploadResponse response) {
+
+				if (response.isSuccessful()) {
+					try {
+						// just send to the submit page
+						URI submit = new URIBuilder(SUBMIT_URL)
+								.addParameter("url", response.getData().getLink())
+								.build();
+						callback.onSuccess(submit);
+					} catch (Exception e) {
+						Throwables.propagate(e);
+					}
+				} else {
+					// propagate
+					Throwables.propagate(new Exception(response.getData().getError()));
+				}
 			}
 
 			@Override
-			public void onCompleted(ImgurUploadResponse response) {
-
-				ImgurUploadResponse uploadResponse = response;
-				if (uploadResponse.isSuccessful()) {
-					try {
-						Method m = User.class.getDeclaredMethod("submit", String.class, String.class, boolean.class, String.class);
-						m.setAccessible(true);
-						Object obj = m.invoke(reddit, postTitle, uploadResponse.getLink(), false, subreddit);
-						JSONObject jobj = (JSONObject) obj;
-						callback.onPostSuccess(((JSONArray) ((JSONArray) ((JSONArray) jobj.get("jquery")).get(16)).get(3)).get(0).toString());
-					} catch (Exception e) {
-						e.printStackTrace();
-						callback.onPostFailure();
-					}
-				} else {
-					callback.onPostFailure();
-				}
+			public void onFailure(Throwable t) {
+				callback.onFailure(t);
 			}
 		});
 	}
-	
-	/**
-	 * Log the user into reddit
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	public static void login(final String username, final String password, final ILoginCallback logincallback) {
-		reddit = new User(new HttpRestClient(), username, password);
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					reddit.connect();
-					logincallback.onLoginSuccess();
-					loggedIn = true;
-				} catch (Exception e) {
-					logincallback.onLoginFailure();
-				}			
-			}
-		}.start();
-	}
-	
-	/**
-	 * @return True if the user is logged in
-	 */
-	public static boolean isLoggedIn() {
-		return loggedIn;
-	}
-	
 }

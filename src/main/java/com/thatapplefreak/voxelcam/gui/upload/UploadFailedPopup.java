@@ -1,23 +1,24 @@
-package com.thatapplefreak.voxelcam.upload.imgur;
+package com.thatapplefreak.voxelcam.gui.upload;
 
+import static com.thatapplefreak.voxelcam.Translations.*;
 import com.voxelmodpack.common.gui.GuiDialogBox;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 
-public class ImgurUploadFailedPopup extends GuiDialogBox {
+public class UploadFailedPopup extends GuiDialogBox {
 	
 	protected String errorMessage;
 
-	public ImgurUploadFailedPopup(GuiScreen parentScreen, String errorMessage) {
-		super(parentScreen, 300, 80, I18n.format("imguruploadfail"));
+	public UploadFailedPopup(GuiScreen parentScreen, String errorMessage) {
+		super(parentScreen, 300, 80, I18n.format(UPLOAD_FAIL));
 		this.errorMessage = errorMessage;
 	}
 
 	@Override
 	protected void onInitDialog() {
-		btnOk.displayString = I18n.format("close");
+		btnOk.displayString = I18n.format(CLOSE);
 		btnCancel.enabled = false;
 	}
 
@@ -32,7 +33,7 @@ public class ImgurUploadFailedPopup extends GuiDialogBox {
 
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
-		drawCenteredString(fontRendererObj, I18n.format("uploadfailed"), dialogX + (dialogWidth / 2), dialogY + 18, 0xFFFF5555);
+		drawCenteredString(fontRendererObj, I18n.format(UPLOAD_FAIL), dialogX + (dialogWidth / 2), dialogY + 18, 0xFFFF5555);
 		drawCenteredString(fontRendererObj, this.errorMessage, dialogX + (dialogWidth / 2), dialogY + 32, 0xFFFFAA00);
 	}
 }

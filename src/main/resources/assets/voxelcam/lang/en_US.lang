@@ -7,43 +7,41 @@ writing=writing
 loading=Loading
 savingscreenshot=Saving Screenshot
 savingpleasewait=Saving Screenshot right now, please wait
-done=Done
+
 ok=Ok
-delete=Delete
+
 yes=Yes
 no=No
 areyousure=Are You Sure
-back=Back
-rename=Rename
-edit=Edit
+
+
+
 openscreenshotsfolder=Open Screenshots Folder
-postto=Post to
+postto=Post to...
 uploading=Uploading
 loadingimage=Loading Image
 noscreenshots=No Screenshots
 search=Search
 megascreenshotsettings=Mega-Screenshot Settings
 width=Width
-height=Height
+
 memorywarning=WARNING! Do not use higher resolutions on low end computers!
 autouploadsocialmedia=Automatically Upload Screenshots to social media
 to=To
 savedscreenshotas=Saved screenshot as
-dropboxnoinstallerror=Error uploading to Dropbox! Dropbox not installed!
-googledrivenoinstallerror=Error uploading to Google Drive! Google Drive not installed!
+noinstallerror=Error uploading to %s, it is not installed!
 imgurautouploaderror=Error uploading image to Imgur
 clicktoview=Click to view
-imgurautouploadsuccess=Auto upload to Imgur succeeded
-dropboxautouploadsuccess=Auto upload to Dropbox succeeded
-googledriveautouploadsuccess=Auto upload to Google Drive succeeded
-imguruploadfail=Upload to Imgur failed
-imguruploadsuccess=Upload to Imgur succeeded
-uploadfailed=Upload failed
+
+autouploadfail=Auto upload failed: %s
+autouploadsuccess=Auto upload succeeded
+uploadfail=Upload failed: %s
+uploadsuccess=Upload succeeded
+
 close=Close
 undo=Undo
 open=Open
-copylink=Copy link
-uploadsuccess=Upload completed successfully
+
 postsuccess=Post completed successfully
 errorcode=Error code
 pleaseenterpin=Please enter the PIN you received
@@ -59,7 +57,7 @@ keybindings=Keybindings
 developer=Developer
 login=Login
 pleaseloginto=Please login to
-loggingin= Logging in
+loggingin=Logging in
 loginfailpleasetryagain=Login failed! Please try again
 username=Username
 password=Password
@@ -74,8 +72,6 @@ welcomeline2=Open the screenshots manager while in game
 welcomeline3=Take a HUGE screenhsot
 welcomeline4=Open VoxelOptions
 
-twitauthline1=To post to Twitter VoxelCam must
-twitauthline2=first receive authorization from Twitter
-twitauthline3=to use your account. If you are not ok
-twitauthline4=with this click "Cancel" otherwise click
-twitauthline5="Ok" to continue.
+auth=To post to %s, VoxelCam must first receive authorization to use your account. If you are not ok with this click "Cancel". Otherwise click "Ok" to continue.
+
+working=Working, Please Wait...

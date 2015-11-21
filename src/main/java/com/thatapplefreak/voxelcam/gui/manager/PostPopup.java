@@ -1,27 +1,32 @@
 package com.thatapplefreak.voxelcam.gui.manager;
 
+import static com.thatapplefreak.voxelcam.Translations.POST_TO;
+import static com.thatapplefreak.voxelcam.Translations.UPLOADING;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
-import com.thatapplefreak.voxelcam.VoxelCamConfig;
-import com.thatapplefreak.voxelcam.VoxelCamCore;
+import com.thatapplefreak.voxelcam.gui.upload.UploadFailedPopup;
+import com.thatapplefreak.voxelcam.gui.upload.UploadSuccessPopup;
+import com.thatapplefreak.voxelcam.gui.upload.WorkingDialogPopup;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
+import com.thatapplefreak.voxelcam.net.Callback;
+import com.thatapplefreak.voxelcam.net.Poster;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurDelete;
+import com.thatapplefreak.voxelcam.net.imgur.ImgurUploadResponse;
+import com.thatapplefreak.voxelcam.net.twitter.TwitterAuth;
 import com.thatapplefreak.voxelcam.upload.CopyUploader;
 import com.thatapplefreak.voxelcam.upload.CopyUploader.CopyResponse;
-import com.thatapplefreak.voxelcam.upload.UploadCallback;
 import com.thatapplefreak.voxelcam.upload.dropbox.DropboxHandler;
 import com.thatapplefreak.voxelcam.upload.googleDrive.GoogleDriveHandler;
 import com.thatapplefreak.voxelcam.upload.imgur.ImgurHandler;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadFailedPopup;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadResponse;
-import com.thatapplefreak.voxelcam.upload.imgur.ImgurUploadSuccessPopup;
 import com.thatapplefreak.voxelcam.upload.reddit.RedditHandler;
-import com.thatapplefreak.voxelcam.upload.reddit.RedditLoginPopup;
-import com.thatapplefreak.voxelcam.upload.reddit.RedditPostPopup;
-import com.thatapplefreak.voxelcam.upload.twitter.TwitterLoginPopup;
 import com.thatapplefreak.voxelcam.upload.twitter.TwitterPostPopup;
 import com.voxelmodpack.common.gui.GuiDialogBox;
+import com.voxelmodpack.common.util.BrowserOpener;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -35,13 +40,11 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 	private volatile GuiScreen completeDialog;
 	private File toUpload;
 	private boolean uploading = false;
-	private ImgurHandler imgur;
 	private DropboxHandler dropbox;
 	private GoogleDriveHandler gDrive;
 
 	public PostPopup(GuiScreen parentScreen, File toUpload) {
-		super(parentScreen, 180, 120, I18n.format("postto") + "...");
-		this.imgur = new ImgurHandler();
+		super(parentScreen, 180, 120, I18n.format(POST_TO) + "...");
 		this.dropbox = new DropboxHandler();
 		this.gDrive = new GoogleDriveHandler();
 		this.toUpload = toUpload;
@@ -70,6 +73,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		}
 
 		btnFacebook.enabled = false;
+		//btnReddit.enabled = false;
 	}
 
 	@Override
@@ -87,7 +91,7 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 
 		if (uploading) {
 			buttonList.clear();
-			drawCenteredString(fontRendererObj, I18n.format("uploading") + "...", width / 2, height / 2, 0xffffff);
+			drawCenteredString(fontRendererObj, I18n.format(UPLOADING) + "...", width / 2, height / 2, 0xffffff);
 		}
 
 		if (this.completeDialog != null) {
@@ -101,20 +105,21 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		if (guibutton.equals(btnCancel)) {
 			closeDialog();
 		} else if (guibutton.equals(btnImgur)) {
-			imgur.upload(toUpload, new UploadCallback<ImgurUploadResponse>() {
+			ImgurHandler.doImgur(toUpload, new Callback<ImgurUploadResponse>() {
 				@Override
-				public void onCompleted(ImgurUploadResponse response) {
-					ImgurUploadResponse uploadResponse = (ImgurUploadResponse) response;
-					if (uploadResponse.isSuccessful()) {
-						onUploadCompleted(new ImgurUploadSuccessPopup(getParentScreen(), uploadResponse.getDeleteHash(), uploadResponse.getLink()));
+				public void onSuccess(ImgurUploadResponse response) {
+					if (response.isSuccessful()) {
+						String delete = response.getData().getDeleteHash();
+						String link = response.getData().getLink();
+						onUploadCompleted(new UploadSuccessPopup(getParentScreen(), link, new ImgurDelete(delete)));
 					} else {
-						onUploadCompleted(new ImgurUploadFailedPopup(getParentScreen(), uploadResponse.get("data")));
+						onUploadCompleted(new UploadFailedPopup(getParentScreen(), response.getData().getError()));
 					}
 				}
 
 				@Override
-				public void onHTTPFailure(int responseCode, String responseMessage) {
-					onUploadCompleted(new ImgurUploadFailedPopup(getParentScreen(), String.format("HTTP Error: %d %s", responseCode, responseMessage)));
+				public void onFailure(Throwable t) {
+					onUploadCompleted(new UploadFailedPopup(getParentScreen(), t.getMessage()));
 				}
 			});
 			this.uploading = true;
@@ -122,20 +127,31 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 			dropbox.upload(toUpload, new FileCallback());
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnTwitter)) {
-			if (VoxelCamCore.getConfig().getStringProperty(VoxelCamConfig.TWITTERAUTHTOKEN).equals("needLogin")) {
-				mc.displayGuiScreen(new TwitterLoginPopup(getParentScreen(), toUpload));
+			TwitterPostPopup twitter = new TwitterPostPopup(getParentScreen(), toUpload);
+			if (!Poster.instance.isLoggedIn("Twitter")) {
+				// try to log in
+				Poster.instance.authenticate(new TwitterAuth());
+				mc.displayGuiScreen(new WorkingDialogPopup(twitter));
 			} else {
-				mc.displayGuiScreen(new TwitterPostPopup(getParentScreen(), toUpload));
+				mc.displayGuiScreen(twitter);
 			}
 		} else if (guibutton.equals(btnGoogleDrive)) {
 			gDrive.upload(toUpload, new FileCallback());
 			mc.displayGuiScreen(getParentScreen());
 		} else if (guibutton.equals(btnReddit)) {
-			if (!RedditHandler.isLoggedIn()) {
-				mc.displayGuiScreen(new RedditLoginPopup(getParentScreen(), toUpload));
-			} else {
-				mc.displayGuiScreen(new RedditPostPopup(getParentScreen(), toUpload));
-			}
+			RedditHandler.doRedditPost(toUpload, new Callback<URI>() {
+				@Override
+				public void onSuccess(URI link) {
+					BrowserOpener.openURIinBrowser(link);
+					closeDialog();
+				}
+
+				@Override
+				public void onFailure(Throwable t) {
+					onUploadCompleted(new UploadFailedPopup(getParentScreen(), t.getMessage()));
+				}
+			});
+			uploading = true;
 		}
 	}
 
@@ -143,26 +159,34 @@ public class PostPopup extends GuiDialogBox implements ScreenshotIncapable {
 		completeDialog = g;
 	}
 
-	private class FileCallback implements UploadCallback<CopyUploader.CopyResponse> {
+	private class FileCallback implements Callback<CopyUploader.CopyResponse> {
 		@Override
-		public void onCompleted(CopyResponse response) {
+		public void onSuccess(CopyResponse response) {
 			File file = response.getDestination();
 			EnumOS os = Util.getOSType();
 			try {
-				if (os.equals(EnumOS.WINDOWS)) {
+				switch (os) {
+				case WINDOWS:
 					new ProcessBuilder("explorer.exe", "/select,", file.toString()).start();
-				} else if (os.equals(EnumOS.OSX)) {
+					break;
+				case OSX:
 					new ProcessBuilder("open", "-R", file.toString()).start();
+					break;
+				default:
+					// most linux platforms have this
+					// doesn't support file selecting >.<
+					new ProcessBuilder("xdg-open", file.getParent()).start();
+					// Nautilus does, but not everyone has it
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 		@Override
-		public void onHTTPFailure(int responseCode, String responseMessage) {
-			// ignore?
+		public void onFailure(Throwable t) {
+			Minecraft mc = Minecraft.getMinecraft();
+			mc.displayGuiScreen(new UploadFailedPopup(mc.currentScreen, t.getMessage()));
 		}
 	}
 

@@ -1,5 +1,5 @@
 package com.thatapplefreak.voxelcam.gui.manager;
-
+import static com.thatapplefreak.voxelcam.Translations.*;
 import com.thatapplefreak.voxelcam.imagehandle.ScreenshotIncapable;
 import com.thatapplefreak.voxelcam.io.VoxelCamIO;
 import com.voxelmodpack.common.gui.GuiDialogBox;
@@ -12,7 +12,7 @@ public class DeletePopup extends GuiDialogBox implements ScreenshotIncapable {
 	private VoxelCamIO images;
 
 	public DeletePopup(GuiScreen parentScreen, VoxelCamIO images) {
-		super(parentScreen, 200, 75, I18n.format("delete"));
+		super(parentScreen, 200, 75, I18n.format(DELETE));
 		this.images = images;
 	}
 
@@ -23,8 +23,8 @@ public class DeletePopup extends GuiDialogBox implements ScreenshotIncapable {
 
 	@Override
 	protected void onInitDialog() {
-		this.btnOk.displayString = I18n.format("yes");
-		this.btnCancel.displayString = I18n.format("no");
+		this.btnOk.displayString = I18n.format(YES);
+		this.btnCancel.displayString = I18n.format(NO);
 
 	}
 
@@ -45,7 +45,7 @@ public class DeletePopup extends GuiDialogBox implements ScreenshotIncapable {
 	@Override
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		super.drawDialog(mouseX, mouseY, f);
-		drawCenteredString(fontRendererObj, I18n.format("areyousure") + "?", width / 2, height / 2 - 12, 0xffffff);
+		drawCenteredString(fontRendererObj, I18n.format(ARE_YOU_SURE) + "?", width / 2, height / 2 - 12, 0xffffff);
 	}
 
 }
