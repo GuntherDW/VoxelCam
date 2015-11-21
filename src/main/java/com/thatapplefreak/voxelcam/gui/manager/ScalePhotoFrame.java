@@ -16,9 +16,6 @@ import static org.lwjgl.opengl.GL11.glShadeModel;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import com.thatapplefreak.voxelcam.imagehandle.GLImageMemoryHandler;
 import com.thatapplefreak.voxelcam.imagehandle.ImageDrawer;
@@ -37,7 +34,7 @@ public class ScalePhotoFrame extends Gui {
 	private File currentPhoto;
 	private GuiScreenShotManager parentScreen;
 
-	private BufferedImage img = null;
+	private BufferedImage img;
 
 	public ScalePhotoFrame(GuiScreenShotManager parent, int x, int y, float scale, File photo) {
 		this.x = x;
@@ -51,13 +48,9 @@ public class ScalePhotoFrame extends Gui {
 
 	public void setPhoto(File photo) {
 		currentPhoto = photo;
+		img = null;
 		if (currentPhoto != null) {
-			try {
-				img = ImageIO.read(photo);
-				GLImageMemoryHandler.tryPutTextureIntoMem(photo);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			new ImageLoadingThread(photo, this).start();
 		}
 	}
 
@@ -73,14 +66,15 @@ public class ScalePhotoFrame extends Gui {
 	}
 
 	public void draw(int mouseX, int mouseY, float partialTicks) {
-		
-		if (currentPhoto != null && GLImageMemoryHandler.loadingImage(GLImageMemoryHandler.getImageGLName(currentPhoto))) {
+
+		if (currentPhoto != null && img == null) {
 			drawBackground();
 			parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.format(LOADING_IMAGE) + "...", x + width / 2, y + height / 2, 0xffffff);
 			return;
 		}
-		
+
 		if (currentPhoto != null && img != null) {
+			GLImageMemoryHandler.tryPutTextureIntoMem(currentPhoto, img);
 			parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, currentPhoto.getName().replace(".png", ""), x + width / 2, y - 10, 0xffffff);
 			float frameAspect = (float) width / (float) height;
 			float picAspect = (float) img.getWidth() / (float) img.getHeight();
@@ -150,5 +144,9 @@ public class ScalePhotoFrame extends Gui {
 		wr.addVertexWithUV(x, y + height - four, 0.0D, 0.0D, 0.0D);
 		t.draw();
 		glEnable(GL_TEXTURE_2D);
+	}
+
+	void setImage(BufferedImage image) {
+		this.img = image;
 	}
 }
