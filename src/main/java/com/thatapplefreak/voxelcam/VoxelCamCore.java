@@ -148,7 +148,11 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	 * Get the minecraft screenshot directiory
 	 */
 	public static File getScreenshotsDir() {
-		return new File(LiteLoader.getGameDirectory(), "/screenshots");
+		File game = LiteLoader.getGameDirectory();
+		if (game == null)
+			// game launched without --gameDir?
+			game = new File(".").getAbsoluteFile(); // current directory
+		return new File(game, "screenshots");
 	}
 
 	@Override
