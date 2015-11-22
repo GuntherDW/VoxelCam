@@ -43,7 +43,7 @@ reobf {
 	litemod {
 		// so launchwrapper will load these classes from the litemod.
 		extraLines 'PK: org/apache/http/entity/mime com/thatapplefreak/redist/org/apache/http/entity/mime'
-		extraLines 'PK: com/google/gdata com/thatapplefreak/redist/com/google/gdata
+		extraLines 'PK: com/google/gdata com/thatapplefreak/redist/com/google/gdata'
 		// because why not?
 		extraLines 'PK: oauth com/thatapplefreak/redist/oauth'
 	}
