@@ -1,6 +1,5 @@
 bin/
 build/
-voxellib/
 .settings/
 .gradle/
 *.launch

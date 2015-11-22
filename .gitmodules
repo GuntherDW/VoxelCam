@@ -1,0 +1,3 @@
+[submodule "voxellib"]
+    path = voxellib
+    url = https://github.com/killjoy1221/VoxelCommonGradle
