@@ -64,7 +64,6 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 	 * on VoxelMenu
 	 */
 	private boolean voxelMenuExists = false;
-	private boolean screenshotIsSaving = false;
 	private MainMenuHandler mainMenu;
 	private StatusMessage savingStatusMessage;
 	private ScreenshotTaker screenshot;
@@ -110,7 +109,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		if (VoxelCamConfig.KEY_OPENSCREENSHOTMANAGER.isPressed() && !Keyboard.isKeyDown(Keyboard.KEY_F3)) {
 			if (!heldKeys.contains(VoxelCamConfig.KEY_OPENSCREENSHOTMANAGER.getKeyCode())) {
 				if (minecraft.currentScreen instanceof GuiMainMenu || minecraft.currentScreen == null) {
-					if (!screenshotIsSaving) {
+					if (!screenshot.isScreenshotSaving()) {
 						minecraft.displayGuiScreen(new GuiScreenShotManager());
 					} else {
 						ChatMessageBuilder cmb = new ChatMessageBuilder();
@@ -134,7 +133,7 @@ public class VoxelCamCore implements ScreenshotListener, InitCompleteListener, R
 		if (minecraft.inGameHasFocus && !minecraft.gameSettings.showDebugInfo) {
 			savingStatusMessage.setText(I18n.format(SAVING_SCREENSHOT) + " (" + screenshot.getSavePercent()
 					+ "%) " + (screenshot.isWritingToFile() ? I18n.format(WRITING) + "..." : ""));
-			savingStatusMessage.setVisible(screenshotIsSaving);
+			savingStatusMessage.setVisible(screenshot.isScreenshotSaving());
 		}
 	}
 
