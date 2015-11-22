@@ -17,7 +17,7 @@ public class VoxelCamConfig extends ModConfig {
 	public static final String PHOTOWIDTH = "photoWidth";
 	public static final String PHOTOHEIGHT = "photoHeight";
 
-	public static final String AUTO_UPLOAD = "autoUplaod";
+	public static final String AUTO_UPLOAD = "autoUpload";
 	public static final String AUTO_UPLOAD_IMGUR = "autoUploadToImgur";
 	public static final String AUTO_UPLOAD_DROPBOX = "autoUploadToDropbox";
 	public static final String AUTO_UPLOAD_GOOGLEDRIVE = "autoUploadToGoogleDrive";

@@ -32,6 +32,11 @@ public class RenamePopup extends GuiDialogBox implements ScreenshotIncapable {
 		renameBox.setText(oldText);
 		renameBox.setFocused(true);
 	}
+	
+	@Override
+	public void updateScreen() {
+		renameBox.updateCursorCounter();
+	}
 
 	@Override
 	public void onSubmit() {

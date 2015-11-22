@@ -35,19 +35,20 @@ clicktoview=Click to view
 
 autouploadfail=Auto upload failed: %s
 autouploadsuccess=Auto upload succeeded
-uploadfail=Upload failed: %s
+uploadfail=Upload failed
 uploadsuccess=Upload succeeded
 
 close=Close
 undo=Undo
 open=Open
+copylink=Copy
 
 postsuccess=Post completed successfully
 errorcode=Error code
 pleaseenterpin=Please enter the PIN you received
 post=Post
 composetweet=Compose Tweet
-remainingletters=Remaining letters
+remainingletters=Remaining letters: %s
 twitterpostfailed=Post to Twitter failed
 postfailed=Post failed
 twitterpostsuccess=Post to Twitter succeeded

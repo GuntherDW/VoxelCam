@@ -43,7 +43,7 @@ public final class Translations {
 	public static final String CLOSE = "close";
 	public static final String UNDO = "undo";
 	public static final String OPEN = "open";
-	public static final String COPY_LINK = "chat.copy";
+	public static final String COPY_LINK = "copylink";
 	public static final String POST_SUCCESS = "postsuccess";
 	public static final String ERROR_CODE = "errorcode";
 	public static final String PLEASE_ENTER_PIN = "pleaseenterpin";

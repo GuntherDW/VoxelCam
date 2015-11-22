@@ -52,8 +52,10 @@ public class TwitterPostPopup extends GuiDialogBox implements Callback<TwitterSt
 		} else {
 			textbox.drawTextBox();
 			drawString(fontRendererObj, I18n.format(COMPOSE_TWEET) + ":", dialogX + 5, height / 2 - 28, 0xFFFFFF);
-			drawString(fontRendererObj, I18n.format(REMAINING_LETTERS) + ":", width / 2 - 5, height / 2 + 5, 0xFFFFFF);
-			drawString(fontRendererObj, Integer.toString(tweetLengh - textbox.getText().length()), width / 2 + 84, height / 2 + 5, 0xFFFFFF);
+			// align right
+			String remaining = I18n.format(REMAINING_LETTERS, tweetLengh - textbox.getText().length()) + " ";
+			int txtw = fontRendererObj.getStringWidth(remaining);
+			drawString(fontRendererObj, remaining, dialogX + dialogWidth -txtw, height / 2 + 5, 0xFFFFFF);
 		}
 	}
 
@@ -66,6 +68,11 @@ public class TwitterPostPopup extends GuiDialogBox implements Callback<TwitterSt
 	@Override
 	protected void onKeyTyped(char keyChar, int keyCode) {
 		textbox.textboxKeyTyped(keyChar, keyCode);
+	}
+
+	@Override
+	public void updateScreen() {
+		textbox.updateCursorCounter();
 	}
 
 	@Override
