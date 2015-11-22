@@ -9,23 +9,32 @@ import net.minecraft.client.gui.GuiScreen;
 
 public final class AuthFetcher {
 
+	private volatile boolean waiting;
+	private String pin;
+
 	/**
-	 * This should never be run in the client thread!
 	 *
 	 * @param url The URL to open
 	 * @param auth The OAuth object to authenticate
 	 * @return The pin that the user entered
 	 */
-	public static String getPin(URL url, OAuth2 auth) {
+	public String getPin(URL url, OAuth2 auth) {
 		GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 		if (screen instanceof GuiDialogBox)
 			screen = ((GuiDialogBox) screen).getParentScreen();
-		LoginPopup login = new LoginPopup(screen, url, auth);
+		LoginPopup login = new LoginPopup(screen, url, auth, this);
 		Minecraft.getMinecraft().displayGuiScreen(login);
-		String pin;
-		while ((pin = login.getPin()) == null) {
-			// wait
-		}
+		waiting = true;
+		while(waiting) {}
 		return pin;
+	}
+
+	void setPin(String pin) {
+		this.pin = pin;
+		stop();
+	}
+
+	void stop() {
+		waiting = false;
 	}
 }

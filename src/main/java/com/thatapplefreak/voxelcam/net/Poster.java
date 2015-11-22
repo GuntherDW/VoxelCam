@@ -119,7 +119,7 @@ public class Poster implements Exposable {
 			OAuthProvider provider = new CommonsHttpOAuthProvider(oauth.getRequestTokenUrl(), oauth.getAccessTokenUrl(),
 					oauth.getAuthorizeUrl());
 			URL auth = new URL(provider.retrieveRequestToken(consumer, OAuth.OUT_OF_BAND));
-			String pin = AuthFetcher.getPin(auth, oauth);
+			String pin = new AuthFetcher().getPin(auth, oauth);
 			if (pin != null) {
 				provider.retrieveAccessToken(consumer, pin);
 				setToken(name, consumer.getToken(), consumer.getTokenSecret());

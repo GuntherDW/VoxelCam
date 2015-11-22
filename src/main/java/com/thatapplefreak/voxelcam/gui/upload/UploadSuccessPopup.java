@@ -36,7 +36,7 @@ public class UploadSuccessPopup extends GuiDialogBox implements Runnable {
 		btnUndo = new GuiButton(300, btnCancel.xPosition, btnCancel.yPosition, 60, 20, I18n.format(UNDO));
 		buttonList.add(btnUndo);
 	}
-	
+
 	@Override
 	protected void actionPerformed(GuiButton guibutton) {
 		if (guibutton.id == btnUndo.id) {

@@ -13,12 +13,13 @@ public class LoginPopup extends GuiDialogBox {
 
 	private URL url;
 	private	OAuth2 auth;
-	private PinPopup pin;
+	private AuthFetcher authFetcher;
 
-	public LoginPopup(GuiScreen parentScreen, URL url, OAuth2 auth) {
+	public LoginPopup(GuiScreen parentScreen, URL url, OAuth2 auth, AuthFetcher authFetcher) {
 		super(parentScreen, 210, 90, I18n.format("login"));
 		this.url = url;
 		this.auth = auth;
+		this.authFetcher = authFetcher;
 	}
 
 	@Override
@@ -30,12 +31,7 @@ public class LoginPopup extends GuiDialogBox {
 	protected void drawDialog(int mouseX, int mouseY, float f) {
 		super.drawDialog(mouseX, mouseY, f);
 		String auth = I18n.format(AUTH, this.auth.getName());
-		fontRendererObj.drawSplitString(auth, width/2-150/2, height/2-37, width, 0xFFFFFF);
-//		drawString(fontRendererObj, I18n.format("twitauthline1"), width / 2 - (150 / 2), height / 2 - 37, 0xFFFFFF);
-//		drawString(fontRendererObj, I18n.format("twitauthline2"), width / 2 - (150 / 2) - 25, height / 2 - 27, 0xFFFFFF);
-//		drawString(fontRendererObj, I18n.format("twitauthline3"), width / 2 - (150 / 2) - 25, height / 2 - 17, 0xFFFFFF);
-//		drawString(fontRendererObj, I18n.format("twitauthline4"), width / 2 - (150 / 2) - 25, height / 2 - 7, 0xFFFFFF);
-//		drawString(fontRendererObj, I18n.format("twitauthline5"), width / 2 - (150 / 2) - 25, height / 2 + 3, 0xFFFFFF);
+		fontRendererObj.drawSplitString(auth, width/2-150/2, height/2-37, dialogWidth, 0xFFFFFF);
 	}
 
 	@Override
@@ -44,13 +40,9 @@ public class LoginPopup extends GuiDialogBox {
 
 	@Override
 	public boolean validateDialog() {
-		mc.displayGuiScreen(new PinPopup(this));
+		mc.displayGuiScreen(new PinPopup(this.getParentScreen(), authFetcher));
 		BrowserOpener.openURLinBrowser(url);
 		return false;
-	}
-	
-	String getPin() {
-		return pin == null ? null : pin.getPin();
 	}
 
 }

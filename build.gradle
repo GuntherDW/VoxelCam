@@ -34,7 +34,7 @@ task litemod(type:Jar, dependsOn: [reobfJar, {project('voxellib').reobfJar}]) {
 	from zipTree(jar.archivePath)
     from {project('voxellib').jar.archivePath}
 	from(configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}) {
-		exclude 'META-INF/***', 'examples/**', 'com/google/gdata/**'
+		exclude 'META-INF/***', 'examples/**'
 	}
 	exclude 'dummyThing'
 }
@@ -42,7 +42,8 @@ artifacts.archives litemod
 reobf {
 	litemod {
 		// so launchwrapper will load these classes from the litemod.
-		extraLines 'PK: org/apache/http/entity/mime com/thatapplefreak/redist/apache/http/entity/mime'
+		extraLines 'PK: org/apache/http/entity/mime com/thatapplefreak/redist/org/apache/http/entity/mime'
+		extraLines 'PK: com/google/gdata com/thatapplefreak/redist/com/google/gdata
 		// because why not?
 		extraLines 'PK: oauth com/thatapplefreak/redist/oauth'
 	}
