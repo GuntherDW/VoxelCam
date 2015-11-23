@@ -1,5 +1,6 @@
 plugins {
 	id 'net.minecraftforge.gradle.tweaker-client' version '2.0.2'
+	id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 archivesBaseName = 'mod_VoxelCam'
 version = '1.4.0-mc1.8'
@@ -21,30 +22,35 @@ processResources {
 	from (sourceSets.main.resources.srcDirs) { exclude 'litemod.json' }
 }
 repositories.flatDir {dir 'liteloader'}
-configurations.compile.transitive=false
+configurations {
+	compile.extendsFrom shadow
+}
 dependencies {
     deobfProvided 'com.mumfrey:liteloader:1.8-SNAPSHOT:srgnames'
 	provided project('voxellib')
-	compile 'org.apache.httpcomponents:httpmime:4.3.3' // for multipart entity
-	compile 'oauth.signpost:signpost-core:1.2.1.2'
-	compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
+	shadow 'org.apache.httpcomponents:httpmime:4.3.3' // for multipart entity
+	shadow 'oauth.signpost:signpost-core:1.2.1.2'
+	shadow 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
 }
-task litemod(type:Jar, dependsOn: [reobfJar, {project('voxellib').reobfJar}]) {
-	extension 'litemod'
-	from zipTree(jar.archivePath)
-    from {project('voxellib').jar.archivePath}
-	from(configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}) {
-		exclude 'META-INF/***', 'examples/**'
+shadowJar {
+	dependencies {
+		// will include jar later
+		exclude project('voxellib')
+		// included in mc
+		exclude dependency('org.apache.httpcomponents:httpclient')
+		exclude dependency('org.apache.httpcomponents:httpcore')
+		exclude dependency('commons-logging:commons-logging')
+		exclude dependency('commons-codec:commons-codec')
 	}
+	relocate 'org.apache.http.entity.mime', 'com.thatapplefreak.redist.org.apache.http.entity.mime'
+	relocate 'com.google.gdata', 'com.thatapplefreak.redist.com.google.gdata'
+	relocate 'oauth', 'com.thatapplefreak.redist.oauth'
+}
+reobf {shadowJar{}}
+task litemod(type:Jar, dependsOn: [reobfShadowJar, {project('voxellib').reobfJar}]) {
+	extension 'litemod'
+	from zipTree(shadowJar.archivePath)
+    from {project('voxellib').jar.archivePath}
 	exclude 'dummyThing'
 }
-artifacts.archives litemod
-reobf {
-	litemod {
-		// so launchwrapper will load these classes from the litemod.
-		extraLines 'PK: org/apache/http/entity/mime com/thatapplefreak/redist/org/apache/http/entity/mime'
-		extraLines 'PK: com/google/gdata com/thatapplefreak/redist/com/google/gdata'
-		// because why not?
-		extraLines 'PK: oauth com/thatapplefreak/redist/oauth'
-	}
-}
+artifacts.archives litemod, shadowJar
