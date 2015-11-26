@@ -37,9 +37,16 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthException;
 
+/**
+ * Central class used to connect to a server using a {@link Request}. Is
+ * exposable so the tokens can be saved to disk in Base64.
+ */
 @ExposableOptions(strategy = ConfigStrategy.Unversioned, filename = "voxelcamtokens")
 public class Poster implements Exposable {
 
+	/**
+	 * The singleton instance
+	 */
 	public static final Poster instance = new Poster();
 
 	@Expose
@@ -48,6 +55,19 @@ public class Poster implements Exposable {
 	private Poster() {
 	}
 
+	/**
+	 * Connects to a server using the {@link Request} given. It can implement a
+	 * sub-interface of {@link Payload} if it wants to send data. It should
+	 * implement {@link OAuth2} or {@link Authorizer} if it needs to be
+	 * authorized as user or application respectively.
+	 * <p>
+	 * Optionally accepts a callback so programs can react to it.
+	 * <p>
+	 * Remember to run this in a separate thread so things don't lock up.
+	 * 
+	 * @param request The request to make
+	 * @param callback The callback
+	 */
 	public <R> void post(Request<R> request, Callback<R> callback) {
 		try {
 			RequestBuilder builder = RequestBuilder.create(request.getMethod().toString());
@@ -98,6 +118,11 @@ public class Poster implements Exposable {
 		}
 	}
 
+	/**
+	 * Attempts to authenticate the user with the server.
+	 * 
+	 * @param auth The authentication data
+	 */
 	public void authenticate(final OAuth2 auth) {
 		new Thread() {
 			@Override
@@ -130,11 +155,23 @@ public class Poster implements Exposable {
 		return consumer;
 	}
 
+	/**
+	 * Invalidates a token by removing it.
+	 * 
+	 * @param name The name of the service to invalidate
+	 */
 	public void invalidate(String name) {
 		tokens.remove(name);
 		saveTokens();
 	}
 
+	/**
+	 * Gets the name from the OAuth object. If it is null, defaults to the class
+	 * name.
+	 * 
+	 * @param oauth The auth object
+	 * @return The name of it.
+	 */
 	public static String getName(OAuth2 oauth) {
 		String name = oauth.getName();
 		if (name == null) {
@@ -171,6 +208,12 @@ public class Poster implements Exposable {
 		LiteLoader.getInstance().writeConfig(this);
 	}
 
+	/**
+	 * Checks if a service is currently logged in or has a token.
+	 * 
+	 * @param name The name of the service
+	 * @return Whether it is logged in
+	 */
 	public boolean isLoggedIn(String name) {
 		return this.tokens.containsKey(name);
 	}
