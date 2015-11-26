@@ -1,5 +1,6 @@
 package com.thatapplefreak.voxelcam.imagehandle;
 
+import static com.thatapplefreak.voxelcam.Translations.OUT_OF_MEMORY;
 import static com.thatapplefreak.voxelcam.Translations.SAVED_SCREENSHOT_AS;
 
 import java.awt.image.BufferedImage;
@@ -27,8 +28,8 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class ScreenshotTaker {
 
-	protected int savepercent = 0;
-	protected boolean isWritingToFile = false;
+	private int savepercent;
+	private boolean isWritingToFile;
 	private boolean screenshotIsSaving;
 	private ScreenshotNamer namer;
 
@@ -69,9 +70,18 @@ public class ScreenshotTaker {
 			public void run() {
 				screenshotIsSaving = true;
 				BufferedImage image;
-				if (OpenGlHelper.isFramebufferEnabled()) {
+				try {
 					image = new BufferedImage(width, height, 1);
-
+				} catch (OutOfMemoryError mem) {
+					screenshotIsSaving = false;
+					new ChatMessageBuilder()
+							.append("[VoxelCam]", EnumChatFormatting.DARK_RED)
+							.append(" " + I18n.format(OUT_OF_MEMORY))
+							.showChatMessageIngame();
+					// rethrow
+					throw mem;
+				}
+				if (OpenGlHelper.isFramebufferEnabled()) {
 					double currentPixel = 0;
 					double totalPixels = pixelValues.length;
 
@@ -82,9 +92,7 @@ public class ScreenshotTaker {
 							savepercent = (int) ((currentPixel / totalPixels) * 100);
 						}
 					}
-
 				} else {
-					image = new BufferedImage(width, height, 1);
 					savepercent = 100;
 					image.setRGB(0, 0, width, height, pixelValues, 0, width);
 				}
@@ -103,6 +111,8 @@ public class ScreenshotTaker {
 					upload(saveTo);
 				} catch (IOException e) {
 					e.printStackTrace();
+					screenshotIsSaving = false;
+					isWritingToFile = false;
 				}
 			}
 		};

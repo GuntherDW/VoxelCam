@@ -76,3 +76,5 @@ welcomeline4=Open VoxelOptions
 auth=To post to %s, VoxelCam must first receive authorization to use your account. If you are not ok with this click "Cancel". Otherwise click "Ok" to continue.
 
 working=Working, Please Wait...
+
+outofmemory=Ran out of memory while saving screenshot. Try taking a smaller screenshot or giving Minecraft more memory.

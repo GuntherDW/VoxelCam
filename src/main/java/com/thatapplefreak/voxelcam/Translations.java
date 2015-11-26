@@ -75,6 +75,8 @@ public final class Translations {
 	public static final String AUTH = "auth";
 	public static final String WORKING = "working";
 
+	public static final String OUT_OF_MEMORY = "outofmemory";
+
 	private Translations() {
 	}
 
